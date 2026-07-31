@@ -5,7 +5,7 @@ import { GlobalLoader } from "@/components/common/global-loader";
 import { getToken } from "@/utils/token";
 // import { getStoredStoreId } from "@/utils/store-storage";
 // import { getMeApi } from "@/features/auth/api/auth-api";
-// import { initAppApi } from "@/features/auth/api/app-init-api";
+import { initAppApi } from "@/app/api/app-init-api";
 // import { getStoresApi } from "@/features/store/api/store-api";
 // import { normalizeUser } from "@/features/auth/utils/normalize-user";
 import { useMenus } from "@/features/menus/hooks/use-menus";
@@ -42,18 +42,21 @@ export function AppInitializer({ children }: AppInitializerProps): React.JSX.Ele
     let cancelled = false;
 
     async function initialize(): Promise<void> {
-      const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
+      setCurrentStep("auth");
       try {
-        const steps: InitStep[] = ["auth", "profile", "permissions", "tenant", "settings", "complete"];
+        const token = getToken();
 
-        for (const step of steps) {
-          if (cancelled) return;
-          setCurrentStep(step);
-          await delay(1500); // Simulate 1.5s loading time per step
+        if (!token) {
+          setAuthLoading(false);
+          setIsInitialized(true);
+          cancelled = true;
         }
 
         if (cancelled) return;
+
+        const res = await initAppApi();
+        
+        console.log("app init response", res.data);
 
         setAuthLoading(false);
         setIsInitialized(true);
