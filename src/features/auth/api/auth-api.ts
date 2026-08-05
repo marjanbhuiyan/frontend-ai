@@ -3,17 +3,8 @@ import type {
   LoginInput,
   RegisterCredentials,
   AuthResponse,
+  RefreshResponse,
 } from "@/features/auth/types";
-
-/**
- * Helper: true when no real backend is configured.
- */
-function isMockMode(): boolean {
-  return (
-    import.meta.env.VITE_USE_MOCK === "true" ||
-    !import.meta.env.VITE_API_BASE_URL
-  );
-}
 
 
 export async function loginApi(formData: LoginInput){
@@ -38,9 +29,8 @@ export async function getMeApi(): Promise<AuthResponse> {
   return data;
 }
 
-
-export async function refreshTokenApi(){
-  const { data } = await apiClient.post(
+export async function refreshTokenApi(): Promise<RefreshResponse> {
+  const { data } = await apiClient.post<RefreshResponse>(
     "/auth/refresh",
     {},
     { withCredentials: true }

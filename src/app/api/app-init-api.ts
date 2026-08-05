@@ -1,6 +1,6 @@
 import { apiClient } from "@/services/api-client";
 
-export async function initAppApi(){
-  const { data } = await apiClient.get("/app/init");
+export async function refreshSession(){
+  const { data } = await apiClient.get("/auth/refresh");
   return data;
 }

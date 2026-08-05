@@ -18,21 +18,23 @@ export function useCreateStore() {
 }
 
 export function useSelectStore() {
-  const { initSession } = useAuth();
+  const { initSession, setSelectStore } = useAuth();
 
   return useMutation({
     mutationFn: (storeId: number) => selectStoreApi(storeId),
     onSuccess: async (res) => {
-      const { accessToken, newUser, store, menus, permissions } = res.data;
+      const { accessToken, user: userData, store, menus, permissions } = res.data;
       setToken(accessToken);
+      setSelectStore(false);
       initSession({
-        user: normalizeUser({ ...newUser, id: String(newUser.id), avatar: newUser.avatar_url ?? undefined }, permissions),
+        user: normalizeUser({ ...userData, id: String(userData.id), avatar: userData.avatar_url ?? undefined }, permissions),
         permissions,
         menus,
         store,
       });
     },
     onError: (error) => {
+      console.log('error', error)
       toast.error(getErrorMessage(error, "Failed to select store."));
     },
   });

@@ -9,8 +9,6 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 
 export function AppProviders({ children }: { children: ReactNode }): React.JSX.Element {
-  // Create QueryClient inside component to ensure proper lifecycle
-  // and avoid issues with hot-reloading or SSR
   const [queryClient] = useState(
     () =>
       new QueryClient({

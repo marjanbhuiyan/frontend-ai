@@ -5,12 +5,53 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  roles: string[];
-  permissions: string[];
   avatar?: string;
-  tenant?: TenantInfo;
-  settings?: UserSettings;
+  // roles: string[];
+  // permissions: string[];
+  // tenant?: TenantInfo;
+  // settings?: UserSettings;
 }
+export interface Store {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+export interface Menu {
+  id?: string;
+  title: string;
+  type: "group" | "item" | "collapse";
+  route?: string;
+  url?: string;
+  icon?: string;
+  children?: Menu[];
+  componentName?: string;
+  resourceName?: string;
+  badge?: {
+    title: string;
+    variant: "teal" | "red" | "blue" | "green" | "default";
+  };
+}
+export interface SessionResponse {
+  accessToken: string;
+  user: User;
+  store: Store;
+  permissions: string[];
+  menus: Menu[];
+}
+
+
+export interface AuthState {
+    accessToken?: string;
+    user?: User;
+    store?: Store;
+    permissions: string[];
+    menus: Menu[];
+    setSession(data: SessionResponse): void;
+    clear(): void;
+}
+
+
 
 export interface TenantInfo {
   id: string;
@@ -57,21 +98,6 @@ export interface AuthData {
 
 export type AuthResponse = ApiResponse<AuthData>;
 
-export interface Menu {
-  id?: string;
-  title: string;
-  type: "group" | "item" | "collapse";
-  route?: string;
-  url?: string;
-  icon?: string;
-  children?: Menu[];
-  componentName?: string;
-  resourceName?: string;
-  badge?: {
-    title: string;
-    variant: "teal" | "red" | "blue" | "green" | "default";
-  };
-}
 
 export interface MeData {
   user: User;
@@ -95,7 +121,8 @@ export type AppInitResponse = ApiResponse<AppInitData>;
 
 export interface StoreSelectData {
   accessToken: string;
-  newUser: {
+  refreshToken: string;
+  user: {
     id: number;
     email: string;
     avatar_url: string | null;
@@ -108,6 +135,19 @@ export interface StoreSelectData {
 }
 
 export type StoreSelectResponse = ApiResponse<StoreSelectData>;
+
+export interface RefreshData {
+  accessToken: string;
+  user: {
+    id: number;
+    email: string;
+    avatar_url: string | null;
+    phone: string | null;
+    name: string;
+  };
+}
+
+export type RefreshResponse = ApiResponse<RefreshData>;
 
 export type RegisterInput = z.input<typeof registertSchema>;
 export type LoginInput = z.input<typeof loginSchema>;

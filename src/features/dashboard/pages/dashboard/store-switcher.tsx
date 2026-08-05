@@ -67,16 +67,16 @@ function StoreSwitcher({
   currentStore: StoreInfo | null;
   onChange: (store: StoreInfo) => void;
   isLoading?: boolean;
-}): React.JSX.Element | null {
+}): React.JSX.Element{
   if (stores.length === 0) return null;
 
   const options: StoreOption[] = stores.map((store) => ({
-    value: store.id,
-    label: store.name,
+    value: store.storeId,
+    label: store.storeName,
     store,
   }));
 
-  const value = options.find((option) => option.value === currentStore?.id) ?? null;
+  const value = options.find((option) => option.value === currentStore?.storeId) ?? null;
 
   return (
     <Select<StoreOption, false>

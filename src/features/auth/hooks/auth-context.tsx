@@ -17,8 +17,10 @@ export interface AuthContextType {
   permissions: string[];
   appInitialize: boolean;
   stores: StoreInfo[];
+  selectStore: boolean;
   currentStore: StoreInfo | null;
   setUser: (user: User | null) => void;
+  setSelectStore: (selectStore: boolean) => void;
   setMenus: (menus: Menu[]) => void;
   setPermissions: (permissions: string[]) => void;
   setAppInitialize: (appInitialize: boolean) => void;
@@ -40,6 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }): React.JSX.E
   const [appInitialize, setAppInitialize] = useState(false);
   const [stores, setStores] = useState<StoreInfo[]>([]);
   const [currentStore, setCurrentStore] = useState<StoreInfo | null>(null);
+  const [selectStore, setSelectStore] = useState<boolean>(false);
 
   const login = useCallback((user: User, token: string) => {
     setToken(token);
@@ -76,6 +79,8 @@ export function AuthProvider({ children }: { children: ReactNode }): React.JSX.E
         appInitialize,
         stores,
         currentStore,
+        selectStore,
+        setSelectStore,
         setUser,
         setMenus,
         setPermissions,

@@ -2,13 +2,14 @@ import { Navigate, useRoutes, BrowserRouter } from "react-router-dom";
 import {
   PublicOnlyRoute,
 } from "@/features/auth/providers/protected-route";
-import { AppInitializer } from "@/app/providers/app-initializer";
 import { ROUTES } from "@/constants";
 import { lazy, Suspense } from "react";
 import { GlobalLoader } from "@/components/common/global-loader";
 import { generateRoutesFromMenus } from "@/app/router/route-generator";
 import DashboardLayout from "@/features/dashboard/layouts/dashboard-layout";
 import { useAuth } from "@/features/auth/hooks/auth-context";
+import { useBootstrap } from "@/hooks/useBootstrap";
+
 
 import type React from "react";
 import { ProtectedRoute } from "@/features/auth/providers/protected-route";
@@ -33,7 +34,7 @@ function HomeRedirect(): React.JSX.Element {
   return <Navigate to={ROUTES.LOGIN} replace />;
 }
 
-function AppRoutes() {
+export function AppRoutes() {
   const { menus } = useAuth();
 
   const routes = [
@@ -76,13 +77,24 @@ function AppRoutes() {
 }
 
 export function AppRouter(): React.JSX.Element {
-  return (
-    <AppInitializer>
-      <BrowserRouter>
+    const bootstrap = useBootstrap();
+  
+    if (bootstrap.isPending) {
+      return (
+        <GlobalLoader
+          message="Starting application..."
+          subMessage="Please wait while we start your application..."
+        />
+      );
+    }
+  
+    if (bootstrap.isError) {
+      return  <Navigate to={ROUTES.LOGIN} replace />
+    }
+  
+    return <BrowserRouter>
         <Suspense fallback={<GlobalLoader message="Loading page..." />}>
           <AppRoutes />
         </Suspense>
-      </BrowserRouter>
-    </AppInitializer>
-  );
+      </BrowserRouter>;
 }
