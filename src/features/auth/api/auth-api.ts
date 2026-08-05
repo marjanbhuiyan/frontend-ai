@@ -1,6 +1,6 @@
 import { apiClient } from "@/services/api-client";
 import type {
-  LoginCredentials,
+  LoginInput,
   RegisterCredentials,
   AuthResponse,
 } from "@/features/auth/types";
@@ -15,16 +15,10 @@ function isMockMode(): boolean {
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/*                                  Endpoints                                 */
-/* -------------------------------------------------------------------------- */
 
-export async function loginApi(
-  credentials: LoginCredentials
-): Promise<AuthResponse> {
-  const { data } = await apiClient.post<AuthResponse>(
-    "/auth/login",
-    credentials
+export async function loginApi(formData: LoginInput){
+  const { data } = await apiClient.post("/auth/login",
+    formData
   );
   return data;
 }
@@ -45,13 +39,8 @@ export async function getMeApi(): Promise<AuthResponse> {
 }
 
 
-export async function refreshTokenApi(): Promise<{ token: string }> {
-  if (isMockMode()) {
-    console.log("[mock] refreshTokenApi called");
-    return { token: "mock-refreshed-token-" + Date.now() };
-  }
-
-  const { data } = await apiClient.post<{ token: string }>(
+export async function refreshTokenApi(){
+  const { data } = await apiClient.post(
     "/auth/refresh",
     {},
     { withCredentials: true }

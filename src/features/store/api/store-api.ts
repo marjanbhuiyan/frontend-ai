@@ -1,4 +1,5 @@
-import { apiClient } from "@/lib/api/axios";
+import { apiClient } from "@/services/api-client";
+import type { ApiResponse, StoreInfo, StoreSelectResponse } from "@/features/auth/types";
 import type { CreateStoreForm } from "../types";
 
 // export interface CreateStorePayload {
@@ -19,10 +20,19 @@ import type { CreateStoreForm } from "../types";
  * Returns every store the current user has access to. Used to populate the
  * store switcher in the dashboard header.
  */
-// export async function getStoresApi(): Promise<ApiResponse<StoreInfo[]>> {
-//   const { data } = await apiClient.get<ApiResponse<StoreInfo[]>>("/stores");
-//   return data;
-// }
+export async function getStoresApi(): Promise<ApiResponse<StoreInfo[]>> {
+  const { data } = await apiClient.get<ApiResponse<StoreInfo[]>>("/stores");
+  return data;
+}
+
+/**
+ * Selects a store and returns a new session (access token, user, menus,
+ * permissions) scoped to that store.
+ */
+export async function selectStoreApi(storeId: number): Promise<StoreSelectResponse> {
+  const { data } = await apiClient.post<StoreSelectResponse>("/stores/select", { storeId });
+  return data;
+}
 
 /* -------------------------------------------------------------------------- */
 /* Detailed store creation (onboarding modal)                                 */

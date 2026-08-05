@@ -13,56 +13,21 @@ import {
   registerApi,
   getMeApi,
 } from "@/features/auth/api/auth-api";
-import { initAppApi } from "@/features/auth/api/app-init-api";
+import { initAppApi } from "@/app/api/app-init-api";
+import { getStoresApi, selectStoreApi } from "@/features/store/api/store-api";
 import type {
-  LoginCredentials,
+  LoginInput,
   RegisterCredentials,
   AuthResponse,
   AppInitResponse,
   StoreInfo,
 } from "@/features/auth/types";
-import { setToken, clearToken, getToken } from "@/utils/token";
+import { clearToken, getToken, setToken } from "@/utils/token";
 import { useAuth } from "@/features/auth/hooks/auth-context";
 import { QUERY_KEYS, ROUTES, DEFAULTS } from "@/constants";
 import { toast } from "@/lib/toast";
 import { normalizeUser } from "@/features/auth/utils/normalize-user";
-// import type { RegisterFormData } from "@/features/auth/types";
-
-
-type FieldError = { field: string; message: string };
-
-type ApiError = AxiosError<{
-  success: boolean;
-  message: string;
-  errors?: string[] | FieldError[];
-  data: null;
-}>;
-
-const getErrorMessage = (error: unknown, fallback: string): string => {
-  const err = error as ApiError;
-  const errors = err.response?.data?.errors;
-  const message = err.response?.data?.message;
-  if (errors && errors.length > 0) {
-    const first = errors[0];
-    if (typeof first === "string") return errors.join(", ");
-    if (typeof first === "object" && "message" in first) return first.message;
-  }
-  if (message) return message;
-  return fallback;
-};
-
-export function getFieldErrors(error: unknown): Record<string, string> {
-  const err = error as ApiError;
-  const errors = err.response?.data?.errors;
-  if (!errors || !Array.isArray(errors)) return {};
-  const result: Record<string, string> = {};
-  for (const e of errors) {
-    if (typeof e === "object" && "field" in e && "message" in e) {
-      result[e.field] = e.message;
-    }
-  }
-  return result;
-}
+import { getErrorMessage } from "@/utils/get-error-message";
 
 export function useMe(): UseQueryResult<AuthResponse, Error> {
   const token = getToken();
@@ -76,24 +41,29 @@ export function useMe(): UseQueryResult<AuthResponse, Error> {
   });
 }
 
-export function useLogin(): UseMutationResult<AuthResponse, Error, LoginCredentials> {
-  const { setHasStore, setStores, login } = useAuth();
+export function useLogin(){
+  const { login, setStores, initSession } = useAuth();
   const navigate = useNavigate();
 
   return useMutation({
-    mutationFn: (credentials: LoginCredentials) => loginApi(credentials),
+    mutationFn: (credentials: LoginInput) => loginApi(credentials),
     onSuccess: async (res) => {
-      const { accessToken, hasStore, stores, user } = res.data;
-      console.log("res", res);
+      const { accessToken, user } = res?.data;
+      if (res?.data.stores) setStores(res?.data.stores);
       login(user, accessToken);
-      if(hasStore == true){
-        console.log("Has store");
-        setHasStore(true);
-      }else{
-        console.log("No store");
-        setHasStore(false);
-      }
-      setStores(stores ?? []);
+      // try {
+      //   const initRes = await initAppApi();
+      //   const { user: initUser, permissions, menus, store, stores } = initRes.data;
+      //   initSession({ user: normalizeUser(initUser, permissions), permissions, menus, store, stores });
+      // } catch (error) {
+      //   toast.error(getErrorMessage(error, "Failed to initialize app."));
+      // }
+      // try {
+      //   const storesRes = await getStoresApi();
+      //   setStores(storesRes.data);
+      // } catch (error) {
+      //   console.error("[login] Failed to load stores:", error);
+      // }
       toast.success(res.message);
       navigate(ROUTES.DASHBOARD)
     },
@@ -110,8 +80,8 @@ export function useInitApp(): UseMutationResult<AppInitResponse, Error, StoreInf
   return useMutation({
     mutationFn: () => initAppApi(),
     onSuccess: async (res) => {
-      const { user, store, permissions, menus } = res.data;
-      initSession({ user: normalizeUser(user, permissions), permissions, menus, store });
+      const { user, store, permissions, menus, stores } = res.data;
+      initSession({ user: normalizeUser(user, permissions), permissions, menus, store, stores });
       await new Promise((resolve) => setTimeout(resolve, 0));
       navigate(ROUTES.DASHBOARD);
     },
@@ -120,6 +90,27 @@ export function useInitApp(): UseMutationResult<AppInitResponse, Error, StoreInf
     },
   });
 }
+
+// export function useSelectStore() {
+//   const { initSession } = useAuth();
+
+//   return useMutation({
+//     mutationFn: (storeId: number) => selectStoreApi(storeId),
+//     onSuccess: async (res) => {
+//       const { accessToken, newUser, store, menus, permissions } = res.data;
+//       setToken(accessToken);
+//       initSession({
+//         user: normalizeUser({ ...newUser, id: String(newUser.id), avatar: newUser.avatar_url ?? undefined }, permissions),
+//         permissions,
+//         menus,
+//         store,
+//       });
+//     },
+//     onError: (error) => {
+//       toast.error(getErrorMessage(error, "Failed to select store."));
+//     },
+//   });
+// }
 
 export function useRegister() {
   return useMutation({

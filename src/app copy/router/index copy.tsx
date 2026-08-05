@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import {
   PublicOnlyRoute,
-} from "@/features/auth/components/protected-route";
+} from "@/features/auth/providers/protected-route";
 import { AppInitializer } from "@/app/providers/app-initializer";
 import { ROUTES } from "@/constants";
 import { lazy, Suspense } from "react";

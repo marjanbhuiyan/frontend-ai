@@ -2,14 +2,9 @@ import { useEffect, useState, type ReactNode } from "react";
 import type React from "react";
 import { useAuth } from "@/features/auth/hooks/auth-context";
 import { GlobalLoader } from "@/components/common/global-loader";
-import { getToken } from "@/utils/token";
-// import { getStoredStoreId } from "@/utils/store-storage";
-// import { getMeApi } from "@/features/auth/api/auth-api";
-import { initAppApi } from "@/app/api/app-init-api";
-// import { getStoresApi } from "@/features/store/api/store-api";
-// import { normalizeUser } from "@/features/auth/utils/normalize-user";
-import { useMenus } from "@/features/menus/hooks/use-menus";
-import { getMenus } from "@/features/menus/api/menus-api";
+import { getToken, clearToken } from "@/utils/token";
+import { getStoresApi } from "@/features/store/api/store-api";
+import { refreshTokenApi } from "@/features/auth/api/auth-api";
 
 
 type InitStep =
@@ -34,7 +29,7 @@ interface AppInitializerProps {
 }
 
 export function AppInitializer({ children }: AppInitializerProps): React.JSX.Element {
-  const { setIsLoading: setAuthLoading, } = useAuth();
+  const { setIsLoading: setAuthLoading, setStores, initSession, login } = useAuth();
   const [isInitialized, setIsInitialized] = useState(false);
   const [currentStep, setCurrentStep] = useState<InitStep>("auth");
 
@@ -43,27 +38,36 @@ export function AppInitializer({ children }: AppInitializerProps): React.JSX.Ele
 
     async function initialize(): Promise<void> {
       setCurrentStep("auth");
-      try {
-        const token = getToken();
+      const token = getToken();
 
-        if (!token) {
-          setAuthLoading(false);
-          setIsInitialized(true);
-          cancelled = true;
-        }
-
-        if (cancelled) return;
-
-        const res = await initAppApi();
-        
-        console.log("app init response", res.data);
-
+      if (!token) {
         setAuthLoading(false);
         setIsInitialized(true);
-      } catch {
-        setAuthLoading(false);
-        setIsInitialized(true);
+        return;
       }
+
+      setCurrentStep("profile");
+      try {
+        const res = await refreshTokenApi();
+        login(res?.data.accessToken, res?.data.user)
+        setStores(res?.data.stores)
+        if (cancelled) return;
+      } catch {
+        if (cancelled) return;
+        clearToken();
+      }
+
+      // try {
+      //   const storesRes = await getStoresApi();
+      //   if (cancelled) return;
+      //   setStores(storesRes.data);
+      // } catch {
+      //   console.error("[init] Failed to load stores");
+      // }
+
+      setCurrentStep("complete");
+      setAuthLoading(false);
+      setIsInitialized(true);
     }
     initialize();
 

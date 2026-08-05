@@ -1,8 +1,5 @@
 import { z } from "zod";
-import { registertSchema } from "@/features/auth/schemas";
-
-export type RegisterInput = z.input<typeof registertSchema>;
-export type RegisterFormData = z.infer<typeof registertSchema>;
+import { registertSchema, loginSchema } from "@/features/auth/schemas";
 
 export interface User {
   id: string;
@@ -26,11 +23,6 @@ export interface UserSettings {
   locale: string;
 }
 
-export interface LoginCredentials {
-  email: string;
-  password: string;
-}
-
 export interface RegisterCredentials {
   email: string;
   password: string;
@@ -48,9 +40,9 @@ export interface ApiResponse<T> {
 }
 
 export interface StoreInfo {
-  id: number;
-  name: string;
-  roleId?: number;
+  storeId: number;
+  storeName: string;
+  role?: string;
   logo?: string | null;
 }
 
@@ -96,6 +88,27 @@ export interface AppInitData {
   };
   permissions: string[];
   menus: Menu[];
+  stores?: StoreInfo[];
 }
 
 export type AppInitResponse = ApiResponse<AppInitData>;
+
+export interface StoreSelectData {
+  accessToken: string;
+  newUser: {
+    id: number;
+    email: string;
+    avatar_url: string | null;
+    phone: string | null;
+    name: string;
+  };
+  store: StoreInfo;
+  menus: Menu[];
+  permissions: string[];
+}
+
+export type StoreSelectResponse = ApiResponse<StoreSelectData>;
+
+export type RegisterInput = z.input<typeof registertSchema>;
+export type LoginInput = z.input<typeof loginSchema>;
+

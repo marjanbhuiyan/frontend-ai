@@ -1,7 +1,7 @@
 import { Navigate, useRoutes, BrowserRouter } from "react-router-dom";
 import {
   PublicOnlyRoute,
-} from "@/features/auth/components/protected-route";
+} from "@/features/auth/providers/protected-route";
 import { AppInitializer } from "@/app/providers/app-initializer";
 import { ROUTES } from "@/constants";
 import { lazy, Suspense } from "react";
@@ -11,6 +11,7 @@ import DashboardLayout from "@/features/dashboard/layouts/dashboard-layout";
 import { useAuth } from "@/features/auth/hooks/auth-context";
 
 import type React from "react";
+import { ProtectedRoute } from "@/features/auth/providers/protected-route";
 
 const NotFoundPage = lazy(
   () => import("@/components/shared/not-found-page")
@@ -53,7 +54,7 @@ function AppRoutes() {
     },
     {
       path: ROUTES.DASHBOARD,
-      element: <DashboardLayout />,
+      element: <ProtectedRoute><DashboardLayout /></ProtectedRoute>,
       errorElement: <ErrorPage />,
       children: [
         ...generateRoutesFromMenus(menus),

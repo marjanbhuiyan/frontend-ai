@@ -1,7 +1,4 @@
-/**
- * Shared / global TypeScript types used across multiple features.
- * Feature-specific types live inside their own feature's `types/` folder.
- */
+import { AxiosError } from "axios";
 
 export interface PaginatedResponse<T> {
   data: T[];
@@ -13,11 +10,14 @@ export interface PaginatedResponse<T> {
   };
 }
 
-export interface ApiError {
+type FieldError = { field: string; message: string };
+
+export type ApiError = AxiosError<{
+  success: boolean;
   message: string;
-  code?: string;
-  statusCode?: number;
-}
+  errors?: string[] | FieldError[];
+  data: null;
+}>;
 
 export interface SelectOption {
   label: string;

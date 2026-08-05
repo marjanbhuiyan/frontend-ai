@@ -7,7 +7,6 @@ export const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(1, 'Password is required'),
 });
-export type LoginFormData = z.infer<typeof loginSchema>;
 
 export const registertSchema = z.object({
     firstName: z.string().max(50),
@@ -54,8 +53,3 @@ export const registertSchema = z.object({
     message: 'roleId is required when storeId is provided',
     path: ['roleId'],
   });
-
-export type RegisterFormData = z.infer<typeof registertSchema>;
-
-/** @deprecated use `registertSchema` */
-export const registerSchema = registertSchema;

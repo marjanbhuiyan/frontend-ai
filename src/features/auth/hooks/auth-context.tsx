@@ -15,18 +15,18 @@ export interface AuthContextType {
   isAuthenticated: boolean;
   menus: Menu[];
   permissions: string[];
-  hasStore: boolean;
+  appInitialize: boolean;
   stores: StoreInfo[];
   currentStore: StoreInfo | null;
   setUser: (user: User | null) => void;
   setMenus: (menus: Menu[]) => void;
   setPermissions: (permissions: string[]) => void;
-  setHasStore: (hasStore: boolean) => void;
+  setAppInitialize: (appInitialize: boolean) => void;
   setStores: (stores: StoreInfo[]) => void;
   setCurrentStore: (store: StoreInfo | null) => void;
   setIsLoading: (loading: boolean) => void;
   login: (user: User, token: string) => void;
-  initSession: (data: { user: User; permissions: string[]; menus: Menu[]; store: StoreInfo }) => void;
+  initSession: (data: { user: User; permissions: string[]; menus: Menu[]; store: StoreInfo; stores?: StoreInfo[] }) => void;
   logout: () => void;
 }
 
@@ -37,7 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }): React.JSX.E
   const [isLoading, setIsLoading] = useState(true);
   const [menus, setMenus] = useState<Menu[]>([]);
   const [permissions, setPermissions] = useState<string[]>([]);
-  const [hasStore, setHasStore] = useState(false);
+  const [appInitialize, setAppInitialize] = useState(false);
   const [stores, setStores] = useState<StoreInfo[]>([]);
   const [currentStore, setCurrentStore] = useState<StoreInfo | null>(null);
 
@@ -46,12 +46,13 @@ export function AuthProvider({ children }: { children: ReactNode }): React.JSX.E
     setUser(user);
   }, []);
 
-  const initSession = useCallback((data: { user: User; permissions: string[]; menus: Menu[]; store: StoreInfo }) => {
+  const initSession = useCallback((data: { user: User; permissions: string[]; menus: Menu[]; store: StoreInfo; stores?: StoreInfo[] }) => {
     setUser(data.user);
     setPermissions(data.permissions);
     setMenus(data.menus);
     setCurrentStore(data.store);
-    setHasStore(true);
+    if (data.stores) setStores(data.stores);
+    setAppInitialize(true);
   }, []);
 
   const logout = useCallback(() => {
@@ -72,13 +73,13 @@ export function AuthProvider({ children }: { children: ReactNode }): React.JSX.E
         isAuthenticated: !!user,
         menus,
         permissions,
-        hasStore,
+        appInitialize,
         stores,
         currentStore,
         setUser,
         setMenus,
         setPermissions,
-        setHasStore,
+        setAppInitialize,
         setStores,
         setCurrentStore,
         setIsLoading,
