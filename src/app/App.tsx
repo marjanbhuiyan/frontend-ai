@@ -8,7 +8,7 @@ import { RegisterPage } from "@/pages/auth/register";
 import { DashboardPage } from "@/pages/dashboard/dashboard";
 import { UsersPage } from "@/pages/users/users";
 import { ProductsPage } from "@/pages/products/products";
-import { ProtectedRoute } from "@/routes/ProtectedRoute";
+import { ProtectedRoute } from "@/app/routes/ProtectedRoute";
 
 const LoginPage = lazy(
   () => import("@/features/auth/pages/login-page")

@@ -6,6 +6,8 @@ export function ProtectedRoute() {
     (state) => state.isAuthenticated
   );
 
+  console.log("isAuthenticated", isAuthenticated);
+
   const location = useLocation();
 
   if (!isAuthenticated) {
