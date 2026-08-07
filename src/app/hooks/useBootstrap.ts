@@ -3,21 +3,26 @@ import { refreshSession } from "@/app/api/app-init-api";
 import { useAuthStore } from "@/store/useAuthStore";
 
 export function useBootstrap() {
-  const setSession = useAuthStore((s) => s.setSession);
+  const setSession = useAuthStore((state) => state.setSession);
+  const clearSession = useAuthStore((state) => state.clearSession);
 
   return useQuery({
     queryKey: ["bootstrap"],
 
     queryFn: async () => {
-      const session = await refreshSession();
+      try {
+        const session = await refreshSession();
 
-      setSession(session);
+        setSession(session);
 
-      return session;
+        return session;
+      } catch (error) {
+        clearSession();
+        return null;
+      }
     },
 
     retry: false,
-
     staleTime: Infinity,
   });
 }

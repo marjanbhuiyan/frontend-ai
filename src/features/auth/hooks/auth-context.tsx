@@ -8,6 +8,7 @@ import {
 import type { User, Menu, StoreInfo } from "@/features/auth/types";
 import { setToken, clearToken } from "@/utils/token";
 import { clearStoredStoreId } from "@/utils/store-storage";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export interface AuthContextType {
   user: User | null;
@@ -47,6 +48,13 @@ export function AuthProvider({ children }: { children: ReactNode }): React.JSX.E
   const login = useCallback((user: User, token: string) => {
     setToken(token);
     setUser(user);
+    useAuthStore.getState().setSession({
+      accessToken: token,
+      user,
+      store: undefined as never,
+      permissions: [],
+      menus: [],
+    });
   }, []);
 
   const initSession = useCallback((data: { user: User; permissions: string[]; menus: Menu[]; store: StoreInfo; stores?: StoreInfo[] }) => {
@@ -56,6 +64,13 @@ export function AuthProvider({ children }: { children: ReactNode }): React.JSX.E
     setCurrentStore(data.store);
     if (data.stores) setStores(data.stores);
     setAppInitialize(true);
+    useAuthStore.getState().setSession({
+      accessToken: useAuthStore.getState().accessToken ?? "",
+      user: data.user,
+      store: data.store as never,
+      permissions: data.permissions,
+      menus: data.menus,
+    });
   }, []);
 
   const logout = useCallback(() => {
@@ -66,6 +81,7 @@ export function AuthProvider({ children }: { children: ReactNode }): React.JSX.E
     setPermissions([]);
     setStores([]);
     setCurrentStore(null);
+    useAuthStore.getState().clear();
   }, []);
 
   return (

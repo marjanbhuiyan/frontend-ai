@@ -8,7 +8,7 @@ import { GlobalLoader } from "@/components/common/global-loader";
 import { generateRoutesFromMenus } from "@/app/router/route-generator";
 import DashboardLayout from "@/features/dashboard/layouts/dashboard-layout";
 import { useAuth } from "@/features/auth/hooks/auth-context";
-import { useBootstrap } from "@/hooks/useBootstrap";
+import { useBootstrap } from "@/app/hooks/useBootstrap";
 
 
 import type React from "react";

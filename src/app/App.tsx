@@ -1,20 +1,70 @@
-import { AppProviders } from "./AppProviders";
-import { Bootstrap } from "./Bootstrap";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { AppProviders } from "@/app/AppProviders";
+import { lazy, Suspense } from "react";
+import { Bootstrap } from "@/app/Bootstrap";
+import { createBrowserRouter, RouterProvider, type RouteObject } from "react-router-dom";
+import { GlobalLoader } from "@/components/common/global-loader";
+import { HomePage } from "@/pages/home";
+import { RegisterPage } from "@/pages/auth/register";
+import { DashboardPage } from "@/pages/dashboard/dashboard";
+import { UsersPage } from "@/pages/users/users";
+import { ProductsPage } from "@/pages/products/products";
+import { ProtectedRoute } from "@/routes/ProtectedRoute";
 
+const LoginPage = lazy(
+  () => import("@/features/auth/pages/login-page")
+);
+const DashboardLayout = lazy(
+  () => import("@/features/dashboard/layouts/dashboard-layout")
+);
 
-const router = createBrowserRouter([
-    { path: "/", element: <div>Home</div> },
-    { path: "/login", element: <div>Login</div> },
-    { path: "/register", element: <div>Register</div> },
-    { path: "/dashboard", element: <div>Dashboard</div> },
-]);
+export const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <HomePage />,
+  },
 
+  {
+    path: "/login",
+    element: <LoginPage />,
+  },
+
+  {
+    path: "/register",
+    element: <RegisterPage />,
+  },
+
+  {
+    element: <ProtectedRoute />,
+    children: [
+      {
+        element: <DashboardLayout />,
+        children: [
+          {
+            path: "/dashboard",
+            element: <DashboardPage />,
+          },
+
+          {
+            path: "/users",
+            element: <UsersPage />,
+          },
+
+          {
+            path: "/products",
+            element: <ProductsPage />,
+          },
+        ],
+      },
+    ],
+  },
+] as RouteObject[]);
 export default function App() {
   return (
     <AppProviders>
       <Bootstrap>
-        <RouterProvider router={router} />
+        <Suspense fallback={<GlobalLoader message="Loading page..." />}>
+          <RouterProvider router={router} />
+        </Suspense>
       </Bootstrap>
     </AppProviders>
   );

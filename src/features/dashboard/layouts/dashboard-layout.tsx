@@ -3,14 +3,13 @@ import { Outlet } from "react-router-dom";
 import { Store, Loader2, LogOut, Search } from "lucide-react";
 import Sidebar from "@/features/dashboard/components/sidebar";
 import Header from "@/features/dashboard/pages/dashboard/header";
-import { useAuth } from "@/features/auth/hooks/auth-context";
-import { useLogout } from "@/features/auth/hooks/use-auth";
 import { useSelectStore } from "@/features/store/hooks/use-store";
 import { getStoredStoreId, setStoredStoreId } from "@/utils/store-storage";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { StoreInfo } from "@/features/auth/types";
+import { useAuthStore } from "@/store/useAuthStore";
 
 import type React from "react";
 
@@ -108,39 +107,38 @@ function StoreSelectionModal({
 
 export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 768);
-  const { user, menus, stores, currentStore, setCurrentStore, selectStore, setSelectStore } = useAuth();
+  const { user, menus, stores, clearSession } = useAuthStore();
 
-  const logout = useLogout();
-  const selectStoreMutation = useSelectStore();
+  // const selectStoreMutation = useSelectStore();
 
-  const [selectedStoreId, setSelectedStoreId] = useState<number | null>(() => {
-    const storedId = getStoredStoreId();
-    return storedId !== null && stores.some((s) => s.storeId === storedId) ? storedId : null;
-  });
+  // const [selectedStoreId, setSelectedStoreId] = useState<number | null>(() => {
+  //   const storedId = getStoredStoreId();
+  //   return storedId !== null && stores.some((s) => s.storeId === storedId) ? storedId : null;
+  // });
 
-  useEffect(() => {
-    if (stores.length === 1 && currentStore?.storeId !== stores[0].storeId) {
-      setStoredStoreId(stores[0].storeId);
-      setCurrentStore(stores[0]);
-    }
-  }, [stores, currentStore, setCurrentStore]);
+  // useEffect(() => {
+  //   if (stores.length === 1 && currentStore?.storeId !== stores[0].storeId) {
+  //     setStoredStoreId(stores[0].storeId);
+  //     setCurrentStore(stores[0]);
+  //   }
+  // }, [stores, currentStore, setCurrentStore]);
 
-  const handleSelectStore = (store: StoreInfo) => {
-    console.log("Selected store:", store);
-    setStoredStoreId(store.storeId);
-    setSelectedStoreId(store.storeId);
-    setSelectStore(false);
-    selectStoreMutation.mutate(store.storeId);
-  };
+  // const handleSelectStore = (store: StoreInfo) => {
+  //   console.log("Selected store:", store);
+  //   setStoredStoreId(store.storeId);
+  //   setSelectedStoreId(store.storeId);
+  //   setSelectStore(false);
+  //   selectStoreMutation.mutate(store.storeId);
+  // };
 
-  const showNoStoreModal = stores.length === 0;
-  const showStoreSelectionModal = stores.length > 1 && selectStore;
+  // const showNoStoreModal = stores.length === 0;
+  // const showStoreSelectionModal = stores.length > 1 && selectStore;
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#f8f9fc] font-sans text-gray-800">
-      <Sidebar sidebarOpen={sidebarOpen} menus={menus} user={user} onToggleSidebar={() => setSidebarOpen(false)} />
+      {/* <Sidebar sidebarOpen={sidebarOpen} menus={menus} user={user} onToggleSidebar={() => setSidebarOpen(false)} /> */}
       <div className="flex flex-1 flex-col overflow-hidden">
-        <Header
+        {/* <Header
           sidebarOpen={sidebarOpen}
           onToggleSidebar={() => setSidebarOpen((prev) => !prev)}
           user={user}
@@ -148,20 +146,20 @@ export default function DashboardLayout() {
           currentStore={currentStore}
           onSwitchStore={(store) => selectStoreMutation.mutate(store.storeId)}
           isSwitchingStore={selectStoreMutation.isPending}
-          onLogout={() => logout.mutate()}
-        />
+          onLogout={() => clearSession()}
+        /> */}
         <main className="flex-1 overflow-y-auto">
           <Outlet />
         </main>
       </div>
 
-      <NoStoreAccessModal open={showNoStoreModal} onLogout={() => logout.mutate()} />
-      <StoreSelectionModal
+      {/* <NoStoreAccessModal open={showNoStoreModal} onLogout={() => clearSession()} /> */}
+      {/* <StoreSelectionModal
         open={showStoreSelectionModal}
         stores={stores}
         isSwitching={selectStoreMutation.isPending}
         onSelect={handleSelectStore}
-      />
+      /> */}
     </div>
   );
 }

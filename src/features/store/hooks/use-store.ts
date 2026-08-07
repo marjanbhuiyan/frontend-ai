@@ -8,6 +8,7 @@ import { getErrorMessage } from "@/utils/get-error-message";
 import { normalizeUser } from "@/features/auth/utils/normalize-user";
 import { setToken } from "@/utils/token";
 import { toast } from "@/lib/toast";
+import { useAuthStore } from "@/store/useAuthStore";
 
 
 
@@ -26,15 +27,22 @@ export function useSelectStore() {
       const { accessToken, user: userData, store, menus, permissions } = res.data;
       setToken(accessToken);
       setSelectStore(false);
+      const normalizedUser = normalizeUser({ ...userData, id: String(userData.id), avatar: userData.avatar_url ?? undefined }, permissions);
+      useAuthStore.getState().setSession({
+        accessToken,
+        user: normalizedUser,
+        store,
+        permissions,
+        menus,
+      });
       initSession({
-        user: normalizeUser({ ...userData, id: String(userData.id), avatar: userData.avatar_url ?? undefined }, permissions),
+        user: normalizedUser,
         permissions,
         menus,
         store,
       });
     },
     onError: (error) => {
-      console.log('error', error)
       toast.error(getErrorMessage(error, "Failed to select store."));
     },
   });

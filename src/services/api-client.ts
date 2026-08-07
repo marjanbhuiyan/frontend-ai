@@ -2,12 +2,16 @@ import axios from "axios";
 import { API_BASE_URL } from "@/constants";
 import { useAuthStore } from "@/store/useAuthStore";
 
-
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  withCredentials: true
+  withCredentials: true,
+  timeout: 15000,
 });
 
+const bareClient = axios.create({
+  baseURL: API_BASE_URL,
+  withCredentials: true,
+});
 
 apiClient.interceptors.request.use(config => {
   const token = useAuthStore.getState().accessToken;
@@ -19,7 +23,6 @@ apiClient.interceptors.request.use(config => {
 
   return config;
 });
-
 
 let refreshPromise: Promise<any> | null = null;
 
@@ -38,14 +41,15 @@ apiClient.interceptors.response.use(
     original._retry = true;
 
     if (!refreshPromise) {
-      refreshPromise = apiClient
+      refreshPromise = bareClient
         .post("/auth/refresh")
         .then((res) => {
+          const data = res.data?.data ?? res.data;
           useAuthStore
             .getState()
-            .setSession(res.data);
+            .setSession(data);
 
-          return res.data;
+          return data;
         })
         .finally(() => {
           refreshPromise = null;

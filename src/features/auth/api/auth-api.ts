@@ -9,7 +9,7 @@ import type {
 
 export async function loginApi(formData: LoginInput){
   const { data } = await apiClient.post("/auth/login",
-    formData
+    formData,
   );
   return data;
 }
@@ -33,7 +33,6 @@ export async function refreshTokenApi(): Promise<RefreshResponse> {
   const { data } = await apiClient.post<RefreshResponse>(
     "/auth/refresh",
     {},
-    { withCredentials: true }
   );
   return data;
 }

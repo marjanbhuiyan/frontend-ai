@@ -22,6 +22,7 @@ import { useAuth } from "@/features/auth/hooks/auth-context";
 import { QUERY_KEYS, ROUTES, DEFAULTS } from "@/constants";
 import { toast } from "@/lib/toast";
 import { getErrorMessage } from "@/utils/get-error-message";
+  import { useAuthStore } from "@/store/useAuthStore";
 
 export function useMe(): UseQueryResult<AuthResponse, Error> {
   const token = getToken();
@@ -36,16 +37,13 @@ export function useMe(): UseQueryResult<AuthResponse, Error> {
 }
 
 export function useLogin(){
-  const { login, setStores, setSelectStore } = useAuth();
   const navigate = useNavigate();
 
   return useMutation({
     mutationFn: (credentials: LoginInput) => loginApi(credentials),
     onSuccess: async (res) => {
-      const { accessToken, user, selectStore } = res?.data;
-      setSelectStore(selectStore);
-      if (res?.data.stores) setStores(res?.data.stores);
-      login(user, accessToken);
+      const { accessToken, user, selectStore, menus, stores, permissions } = res?.data;
+      useAuthStore.getState().setSession({ accessToken, user, stores, menus, permissions });
       toast.success(res.message);
       navigate(ROUTES.DASHBOARD)
     },

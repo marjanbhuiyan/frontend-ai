@@ -1,20 +1,83 @@
 import { create } from "zustand";
-import type { AuthState } from "@/features/auth/types";
 
+export interface User {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
+export interface Store {
+  id: number;
+  name: string;
+}
+
+export interface Menu {
+  id: number;
+  name: string;
+  title: string;
+  path: string | null;
+  icon?: string;
+  parentId: number | null;
+  order: number;
+  children?: Menu[];
+}
+
+export interface Permission {
+  id: number;
+  name: string;
+}
+
+export interface Session {
+  user: User;
+  accessToken: string;
+  stores: Store[];
+  menus: Menu[];
+  permissions: Permission[];
+}
+
+interface AuthState {
+  user: User | null;
+  accessToken: string | null;
+  stores: Store[];
+  menus: Menu[];
+  permissions: Permission[];
+
+  isAuthenticated: boolean;
+
+  setSession: (session: Session) => void;
+  clearSession: () => void;
+}
 
 export const useAuthStore = create<AuthState>((set) => ({
-  accessToken: undefined,
-  user: undefined,
-  store: undefined,
-  permissions: [],
+  user: null,
+  accessToken: null,
+
+  stores: [],
   menus: [],
-  setSession: (data) =>
-    set(() => ({
-      accessToken: data.accessToken,
-      user: data.user,
-      store: data.store,
-      permissions: data.permissions,
-      menus: data.menus,
-    })),
-  clear: () => set(() => ({ accessToken: undefined, user: undefined, store: undefined, permissions: [], menus: [] })),
+  permissions: [],
+
+  isAuthenticated: false,
+
+  setSession: (session) =>
+    set({
+      user: session.user,
+      accessToken: session.accessToken,
+      stores: session.stores,
+      menus: session.menus,
+      permissions: session.permissions,
+
+      isAuthenticated: true,
+    }),
+
+  clearSession: () =>
+    set({
+      user: null,
+      accessToken: null,
+      stores: [],
+      menus: [],
+      permissions: [],
+
+      isAuthenticated: false,
+    }),
 }));

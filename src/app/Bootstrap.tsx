@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
-import { useBootstrap } from "@/hooks/useBootstrap";
+
+import { useBootstrap } from "@/app/hooks/useBootstrap";
 import { GlobalLoader } from "@/components/common/global-loader";
 
 export function Bootstrap({
@@ -7,14 +8,10 @@ export function Bootstrap({
 }: {
   children: ReactNode;
 }) {
-  const { isPending, isError } = useBootstrap();
+  const { isPending } = useBootstrap();
 
   if (isPending) {
     return <GlobalLoader />;
-  }
-
-  if (isError) {
-    return <div>Error during bootstrap</div>;
   }
 
   return <>{children}</>;

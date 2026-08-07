@@ -1,11 +1,13 @@
 import { useEffect, useState, type ReactNode } from "react";
 import type React from "react";
+import axios from "axios";
 import { useAuth } from "@/features/auth/hooks/auth-context";
 import { GlobalLoader } from "@/components/common/global-loader";
 import { getToken, setToken, clearToken } from "@/utils/token";
-import { refreshTokenApi } from "@/features/auth/api/auth-api";
 import { getStoresApi } from "@/features/store/api/store-api";
 import { normalizeUser } from "@/features/auth/utils/normalize-user";
+import { useAuthStore } from "@/store/useAuthStore";
+import { API_BASE_URL } from "@/constants";
 
 type InitStep =
   | "auth"
@@ -48,11 +50,23 @@ export function AppInitializer({ children }: AppInitializerProps): React.JSX.Ele
 
       setCurrentStep("profile");
       try {
-        const res = await refreshTokenApi();
+        const { data: res } = await axios.post(
+          `${API_BASE_URL}/auth/refresh`,
+          {},
+          { withCredentials: true }
+        );
         const { accessToken, user } = res.data;
         if (cancelled) return;
         setToken(accessToken);
-        setUser(normalizeUser({ ...user, id: String(user.id), avatar: user.avatar_url ?? undefined }));
+        const normalizedUser = normalizeUser({ ...user, id: String(user.id), avatar: user.avatar_url ?? undefined });
+        setUser(normalizedUser);
+        useAuthStore.getState().setSession({
+          accessToken,
+          user: normalizedUser,
+          store: undefined as never,
+          permissions: [],
+          menus: [],
+        });
       } catch {
         if (cancelled) return;
         clearToken();
