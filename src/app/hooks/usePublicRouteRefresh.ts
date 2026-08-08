@@ -1,8 +1,9 @@
 import { useEffect, useRef } from "react";
+import { getToken } from "@/utils/token";
 import { refreshSession } from "@/app/api/app-api";
 import { useAuthStore } from "@/store/useAuthStore";
 
-export function useRefreshSession() {
+export function usePublicRouteRefresh() {
   const setSession = useAuthStore((state) => state.setSession);
   const clearSession = useAuthStore((state) => state.clearSession);
   const didInit = useRef(false);
@@ -11,8 +12,11 @@ export function useRefreshSession() {
     if (didInit.current) return;
     didInit.current = true;
 
-    const { accessToken } = useAuthStore.getState();
-    if (!accessToken) return;
+    // If zustand already has an access token, don't refresh and don't check localStorage.
+    if (useAuthStore.getState().accessToken) return;
+
+    // Otherwise refresh only when an access token exists in localStorage.
+    if (!getToken()) return;
 
     async function run() {
       try {
