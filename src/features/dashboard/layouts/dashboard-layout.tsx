@@ -109,7 +109,7 @@ export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 768);
   const { user, menus, stores, clearSession } = useAuthStore();
 
-  // const selectStoreMutation = useSelectStore();
+  const selectStoreMutation = useSelectStore();
 
   // const [selectedStoreId, setSelectedStoreId] = useState<number | null>(() => {
   //   const storedId = getStoredStoreId();
@@ -136,18 +136,18 @@ export default function DashboardLayout() {
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#f8f9fc] font-sans text-gray-800">
-      {/* <Sidebar sidebarOpen={sidebarOpen} menus={menus} user={user} onToggleSidebar={() => setSidebarOpen(false)} /> */}
+      <Sidebar sidebarOpen={sidebarOpen} menus={menus} user={user} onToggleSidebar={() => setSidebarOpen(false)} />
       <div className="flex flex-1 flex-col overflow-hidden">
-        {/* <Header
+        <Header
           sidebarOpen={sidebarOpen}
           onToggleSidebar={() => setSidebarOpen((prev) => !prev)}
           user={user}
           stores={stores}
-          currentStore={currentStore}
+          currentStore={null}
           onSwitchStore={(store) => selectStoreMutation.mutate(store.storeId)}
           isSwitchingStore={selectStoreMutation.isPending}
           onLogout={() => clearSession()}
-        /> */}
+        />
         <main className="flex-1 overflow-y-auto">
           <Outlet />
         </main>

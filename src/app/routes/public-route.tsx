@@ -1,20 +1,17 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuthStore } from "@/store/useAuthStore";
-import { useRefreshSession } from "@/app/hooks/useRefreshSession";
 
-export function ProtectedRoute() {
-  useRefreshSession();
-
+export function PublicRoute() {
   const isAuthenticated = useAuthStore(
     (state) => state.isAuthenticated
   );
 
   const location = useLocation();
 
-  if (!isAuthenticated) {
+  if (isAuthenticated) {
     return (
       <Navigate
-        to="/login"
+        to="/dashboard"
         replace
         state={{ from: location }}
       />

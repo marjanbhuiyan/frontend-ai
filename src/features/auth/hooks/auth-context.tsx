@@ -81,7 +81,7 @@ export function AuthProvider({ children }: { children: ReactNode }): React.JSX.E
     setPermissions([]);
     setStores([]);
     setCurrentStore(null);
-    useAuthStore.getState().clear();
+    useAuthStore.getState().clearSession();
   }, []);
 
   return (

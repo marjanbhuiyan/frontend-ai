@@ -9,6 +9,7 @@ import { DashboardPage } from "@/pages/dashboard/dashboard";
 import { UsersPage } from "@/pages/users/users";
 import { ProductsPage } from "@/pages/products/products";
 import { ProtectedRoute } from "@/app/routes/ProtectedRoute";
+import { PublicRoute } from "@/app/routes/public-route";
 
 const LoginPage = lazy(
   () => import("@/features/auth/pages/login-page")
@@ -19,13 +20,17 @@ const DashboardLayout = lazy(
 
 export const router = createBrowserRouter([
   {
-    path: "/",
-    element: <HomePage />,
-  },
-
-  {
-    path: "/login",
-    element: <LoginPage />,
+    element: <PublicRoute/>,
+    children: [
+      {
+        index: true,
+        element: <HomePage />,
+      },
+      {
+        path: "login",
+        element: <LoginPage />,
+      },
+    ],
   },
 
   {
