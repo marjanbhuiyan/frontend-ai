@@ -4,6 +4,7 @@ import { Store, Loader2, LogOut, Search } from "lucide-react";
 import Sidebar from "@/features/dashboard/components/sidebar";
 import Header from "@/features/dashboard/components/header";
 import { useSelectStore } from "@/features/store/hooks/use-store";
+import { useLogout } from "@/features/auth/hooks/use-auth";
 import { getStoredStoreId } from "@/utils/store-storage";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -108,7 +109,19 @@ function StoreSelectionModal({
 
 export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 768);
-  const { user, menus, stores: persistedStores, clearSession } = useAuthStore();
+  const { user, menus, stores: persistedStores } = useAuthStore();
+  const logout = useLogout();
+
+  // console.log("stores", persistedStores)
+
+  // Logout — calls POST /auth/logout via useLogout; on success the access
+  // token is cleared and the persisted Zustand session is removed before
+  // redirecting to the login page. Extra clicks while the request is in-flight
+  // are ignored so the logout only fires once.
+  const handleLogout = () => {
+    if (logout.isPending) return;
+    logout.mutate();
+  };
   // const { data: storesResponse } = useMyStores();
   // const stores = storesResponse?.data ?? [];
   const selectStoreMutation = useSelectStore();
@@ -162,6 +175,11 @@ export default function DashboardLayout() {
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#f8f9fc] font-sans text-gray-800">
+      {/* Top loading line shown while a store switch request is in-flight.
+          Fixed at the very top so it sits above the navbar & sidebar. */}
+      {selectStoreMutation.isPending && (
+        <div className="pointer-events-none fixed inset-x-0 top-0 z-[110] h-0.5 animate-pulse bg-blue-600" />
+      )}
       <Sidebar sidebarOpen={sidebarOpen} menus={menus} user={user} onToggleSidebar={() => setSidebarOpen(false)} />
       <div className="flex flex-1 flex-col overflow-hidden">
         <Header
@@ -169,11 +187,11 @@ export default function DashboardLayout() {
           onToggleSidebar={() => setSidebarOpen((prev) => !prev)}
           user={user}
           stores={null}
-          currentStore={null}
+          currentStore={persistedStores[0] ?? null}
           onSwitchStore={handleSelectStore}
           onOpenStores={undefined}
           isSwitchingStore={selectStoreMutation.isPending}
-          onLogout={() => clearSession()}
+          onLogout={handleLogout}
         />
         <main className="flex-1 overflow-y-auto">
           <Outlet />

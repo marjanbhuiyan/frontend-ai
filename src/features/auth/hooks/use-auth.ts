@@ -18,7 +18,6 @@ import type {
   AuthResponse,
 } from "@/features/auth/types";
 import { clearToken, getToken } from "@/utils/token";
-import { useAuth } from "@/features/auth/hooks/auth-context";
 import { QUERY_KEYS, ROUTES, DEFAULTS } from "@/constants";
 import { toast } from "@/lib/toast";
 import { getErrorMessage } from "@/utils/get-error-message";
@@ -76,9 +75,6 @@ export function useLogout(): UseMutationResult<void, Error, void> {
   return useMutation({
     mutationFn: logoutApi,
     onSuccess: async () => {
-      clearToken();
-      // Remove the persisted Zustand session (user, token, stores, menus,
-      // permissions) after the backend logout succeeds.
       useAuthStore.getState().clearSession();
       queryClient.clear();
       toast.success("Logged out successfully.");

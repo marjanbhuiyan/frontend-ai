@@ -8,11 +8,45 @@ import { Store, Check, ChevronDown, Loader2 } from "lucide-react";
 import type { StoreInfo } from "@/features/auth/types";
 import type React from "react";
 import { useMyStores } from "@/features/store/hooks/use-store";
+import { useAuthStore } from "@/store/useAuthStore";
 
 interface StoreOption {
   value: number;
   label: string;
   store: StoreInfo;
+}
+
+/**
+ * Store objects come in two shapes: the fetched list uses `storeId`/
+ * `storeName`, while the persisted session uses `id`/`name`. These helpers
+ * resolve the numeric id / display name from either shape so the switcher can
+ * always select and label the current store.
+ */
+type SessionStoreShape = {
+  storeId?: number | null;
+  id?: number | string | null;
+  storeName?: string | null;
+  name?: string | null;
+  logo?: string | null;
+};
+
+function toStoreId(store: SessionStoreShape | null | undefined): number | null {
+  const id = store?.storeId ?? store?.id;
+  if (id == null) return null;
+  const num = typeof id === "number" ? id : Number(id);
+  return Number.isFinite(num) ? num : null;
+}
+
+function toStoreName(store: SessionStoreShape | null | undefined): string {
+  return store?.storeName ?? store?.name ?? "";
+}
+
+function toStoreInfo(store: SessionStoreShape | null | undefined): StoreInfo {
+  return {
+    storeId: toStoreId(store) ?? 0,
+    storeName: toStoreName(store),
+    logo: store?.logo ?? null,
+  };
 }
 
 function PlanBadge(): React.JSX.Element {
@@ -60,17 +94,28 @@ function DropdownIndicator(props: DropdownIndicatorProps<StoreOption, false>): R
 
 function StoreSwitcher({
   stores: storesProp,
-  currentStore,
   onChange,
   isLoading,
 }: {
-  stores: StoreInfo[];
+  stores: StoreInfo[] | null;
   currentStore: StoreInfo | null;
   onChange: (store: StoreInfo) => void;
   onOpen?: () => void;
   isLoading?: boolean;
 }): React.JSX.Element {
   const myStoresQuery = useMyStores();
+  const { stores: currentStores } = useAuthStore();
+
+  console.log("currentStores", currentStores);
+
+  // `stores` in the persisted session can be a single store object (legacy
+  // data) or an array — normalize to a list before reading the active id.
+  const rawStores = currentStores as unknown as SessionStoreShape | SessionStoreShape[];
+  const currentStoresList: SessionStoreShape[] = Array.isArray(rawStores)
+    ? rawStores
+    : rawStores
+      ? [rawStores]
+      : [];
 
   const handleMenuOpen = () => {
     myStoresQuery.refetch();
@@ -80,15 +125,30 @@ function StoreSwitcher({
 
   console.log("fetchedStores", fetchedStores);
 
-  const stores: StoreInfo[] = fetchedStores.length ? fetchedStores : storesProp;
+  // The dropdown fetches fresh options on open (`useMyStores` is enabled on
+  // demand), so until then fall back to the persisted session stores and then
+  // the prop. Otherwise options are empty and `value` stays null even though
+  // the user already has stores.
+  const stores: SessionStoreShape[] = fetchedStores.length
+    ? fetchedStores
+    : currentStoresList.length
+      ? currentStoresList
+      : (storesProp ?? []);
 
-  // const options: StoreOption[] = stores.map((store) => ({
-  //   value: store.storeId,
-  //   label: store.storeName,
-  //   store,
-  // }));
+  const options: StoreOption[] = stores.map((store) => {
+    const info = toStoreInfo(store);
+    return {
+      value: info.storeId,
+      label: info.storeName,
+      store: info,
+    };
+  });
 
-  // const value = options.find((option) => option.value === currentStore?.storeId) ?? null;
+  const activeStoreId = toStoreId(currentStoresList[0]);
+
+  const value = options.find((option) => option.value === activeStoreId) ?? null;
+
+  console.log("value", value);
 
   return (
     <Select<StoreOption, false>
@@ -97,9 +157,8 @@ function StoreSwitcher({
       unstyled
       isSearchable
       isLoading={myStoresQuery.isFetching || isLoading}
-      // options={options}
-      options={null}
-      value={null}
+      options={options}
+      value={value}
       onChange={(option) => option && onChange(option.store)}
       onMenuOpen={handleMenuOpen}
       placeholder="Select store"

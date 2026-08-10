@@ -81,6 +81,7 @@ export interface ApiResponse<T> {
 }
 
 export interface StoreInfo {
+  id?: number | null;
   storeId: number;
   storeName: string;
   role?: string;
@@ -120,14 +121,30 @@ export interface AppInitData {
 
 export type AppInitResponse = ApiResponse<AppInitData>;
 
+export interface SelectedStore {
+  id: number;
+  name: string;
+  logo: string | null;
+  phone: string | null;
+  address: string | null;
+  timezone: string;
+  currency: string;
+  plan: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface StoreSelectData {
-  storeId: number;
+  storeId?: number;
   accessToken: string;
   user: User;
   permissions: string[];
   menus: Menu[];
   hasStore?: boolean;
-  stores?: StoreInfo[];
+  // Select-store returns a SINGLE store object — unlike `/stores/my-stores`
+  // which returns a `StoreInfo[]` list — so allow both shapes here.
+  stores?: SelectedStore | SelectedStore[];
   forbiddenRoutes?: string[];
 }
 
