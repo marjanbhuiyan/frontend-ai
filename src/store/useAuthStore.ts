@@ -9,6 +9,7 @@ export interface Session {
   stores?: StoreInfo[];
   menus: Menu[];
   permissions: string[];
+  forbiddenRoutes?: string[];
 }
 
 export type { User, Menu, StoreInfo };
@@ -19,6 +20,7 @@ interface AuthState {
   stores: StoreInfo[];
   menus: Menu[];
   permissions: string[];
+  forbiddenRoutes: string[];
 
   isAuthenticated: boolean;
 
@@ -35,6 +37,7 @@ export const useAuthStore = create<AuthState>()(
       stores: [],
       menus: [],
       permissions: [],
+      forbiddenRoutes: [],
 
       isAuthenticated: false,
 
@@ -45,6 +48,7 @@ export const useAuthStore = create<AuthState>()(
           stores: session.stores ?? (session.store ? [session.store] : []),
           menus: session.menus ?? [],
           permissions: session.permissions ?? [],
+          forbiddenRoutes: session.forbiddenRoutes ?? [],
 
           isAuthenticated: true,
         }),
@@ -56,6 +60,7 @@ export const useAuthStore = create<AuthState>()(
           stores: [],
           menus: [],
           permissions: [],
+          forbiddenRoutes: [],
 
           isAuthenticated: false,
         }),
@@ -69,6 +74,7 @@ export const useAuthStore = create<AuthState>()(
         stores: state.stores,
         menus: state.menus,
         permissions: state.permissions,
+        forbiddenRoutes: state.forbiddenRoutes,
         isAuthenticated: state.isAuthenticated,
       }),
     }

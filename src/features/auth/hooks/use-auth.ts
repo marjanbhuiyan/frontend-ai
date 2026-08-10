@@ -42,8 +42,8 @@ export function useLogin(){
   return useMutation({
     mutationFn: (credentials: LoginInput) => loginApi(credentials),
     onSuccess: async (res) => {
-      const { accessToken, user, selectStore, menus, stores, permissions } = res?.data;
-      useAuthStore.getState().setSession({ accessToken, user, stores, menus, permissions });
+      const { accessToken, user, menus, stores, permissions, forbiddenRoutes } = res?.data;
+      useAuthStore.getState().setSession({ accessToken, user, stores, menus, permissions, forbiddenRoutes });
       toast.success(res.message);
       navigate(ROUTES.DASHBOARD)
     },

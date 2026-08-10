@@ -94,6 +94,7 @@ export interface AuthData {
   menus: Menu[];
   hasStore?: boolean;
   stores?: StoreInfo[];
+  forbiddenRoutes?: string[];
 }
 
 export type AuthResponse = ApiResponse<AuthData>;
@@ -120,18 +121,14 @@ export interface AppInitData {
 export type AppInitResponse = ApiResponse<AppInitData>;
 
 export interface StoreSelectData {
+  storeId: number;
   accessToken: string;
-  refreshToken: string;
-  user: {
-    id: number;
-    email: string;
-    avatar_url: string | null;
-    phone: string | null;
-    name: string;
-  };
-  store: StoreInfo;
-  menus: Menu[];
+  user: User;
   permissions: string[];
+  menus: Menu[];
+  hasStore?: boolean;
+  stores?: StoreInfo[];
+  forbiddenRoutes?: string[];
 }
 
 export type StoreSelectResponse = ApiResponse<StoreSelectData>;

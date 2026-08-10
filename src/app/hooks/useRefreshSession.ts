@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { refreshSession } from "@/app/api/app-api";
 import { useAuthStore } from "@/store/useAuthStore";
+import { toast } from "@/lib/toast";
 
 export function useRefreshSession() {
   const setSession = useAuthStore((state) => state.setSession);
@@ -12,7 +13,7 @@ export function useRefreshSession() {
     didInit.current = true;
 
     const { accessToken } = useAuthStore.getState();
-    if (!accessToken) return;
+    if (accessToken) return;
 
     async function run() {
       try {
@@ -27,6 +28,7 @@ export function useRefreshSession() {
         });
       } catch (error) {
         clearSession();
+        toast.error("Session expired");
       }
     }
 

@@ -11,6 +11,7 @@ export const ROUTES = {
 export const QUERY_KEYS = {
   ME: ["me"] as const,
   USERS: ["users"] as const,
+  MY_STORES: ["my-stores"] as const,
 } as const;
 
 export const DEFAULTS = {

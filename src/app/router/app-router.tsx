@@ -6,9 +6,10 @@ import { ROUTES } from "@/constants";
 import { lazy, Suspense } from "react";
 import { GlobalLoader } from "@/components/common/global-loader";
 import { generateRoutesFromMenus } from "@/app/router/route-generator";
+import { DashboardFallback } from "@/app/router/dashboard-fallback";
 import DashboardLayout from "@/features/dashboard/layouts/dashboard-layout";
-import { useAuth } from "@/features/auth/hooks/auth-context";
 import { useBootstrap } from "@/app/hooks/useBootstrap";
+import { useAuthStore } from "@/store/useAuthStore";
 
 
 import type React from "react";
@@ -35,7 +36,10 @@ function HomeRedirect(): React.JSX.Element {
 }
 
 export function AppRoutes() {
-  const { menus } = useAuth();
+  // Single source of truth: the persisted Zustand store carries the backend
+  // filtered (permission + store scoped) menu tree across reloads.
+  const { menus } = useAuthStore();
+  // const { menus } = useAuth(); // (legacy context source — see useAuthStore)
 
   const routes = [
     {
@@ -59,6 +63,7 @@ export function AppRoutes() {
       errorElement: <ErrorPage />,
       children: [
         ...generateRoutesFromMenus(menus),
+        { path: "*", element: <DashboardFallback /> },
       ],
     },
     {

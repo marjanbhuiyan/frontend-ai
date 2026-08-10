@@ -1,15 +1,16 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Outlet } from "react-router-dom";
 import { Store, Loader2, LogOut, Search } from "lucide-react";
 import Sidebar from "@/features/dashboard/components/sidebar";
-import Header from "@/features/dashboard/pages/dashboard/header";
+import Header from "@/features/dashboard/components/header";
 import { useSelectStore } from "@/features/store/hooks/use-store";
-import { getStoredStoreId, setStoredStoreId } from "@/utils/store-storage";
+import { getStoredStoreId } from "@/utils/store-storage";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { StoreInfo } from "@/features/auth/types";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useMyStores } from "@/features/store/hooks/use-store";
 
 import type React from "react";
 
@@ -107,9 +108,42 @@ function StoreSelectionModal({
 
 export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 768);
-  const { user, menus, stores, clearSession } = useAuthStore();
-
+  const { user, menus, stores: persistedStores, clearSession } = useAuthStore();
+  // const { data: storesResponse } = useMyStores();
+  // const stores = storesResponse?.data ?? [];
   const selectStoreMutation = useSelectStore();
+
+  // console.log("storesResponse", stores);
+
+  // const currentStore =
+  //   stores.find((store) => store.storeId === getStoredStoreId()) ?? null;
+
+  // Called when the user picks a store in the header switcher. `/stores/select`
+  // returns a session scoped to that store; useSelectStore persists it (menus
+  // & permissions are updated) and reloads the app on success.
+  const handleSelectStore = (store: StoreInfo) => {
+    selectStoreMutation.mutate(store.storeId);
+  };
+
+  // const [stores, setStores] = useState<StoreInfo[]>([]);
+
+  // const selectStoreMutation = useSelectStore();
+  // const myStoresQuery = useMyStores();
+
+  // const currentStoreId = getStoredStoreId();
+  // const currentStore = currentStoreId != null
+  //   ? (stores.find((s) => s.storeId === currentStoreId) ?? null)
+  //   : null;
+
+  // const loadMyStores = useCallback(async () => {
+  //   const res = await myStoresQuery.refetch();
+  //   if (res.data?.data) setStores(res.data.data);
+  // }, [myStoresQuery]);
+
+  // const handleSelectStore = (store: StoreInfo) => {
+  //   console.log("Selected store:", store);
+  //   // selectStoreMutation.mutate(store.storeId);
+  // };
 
   // const [selectedStoreId, setSelectedStoreId] = useState<number | null>(() => {
   //   const storedId = getStoredStoreId();
@@ -123,14 +157,6 @@ export default function DashboardLayout() {
   //   }
   // }, [stores, currentStore, setCurrentStore]);
 
-  // const handleSelectStore = (store: StoreInfo) => {
-  //   console.log("Selected store:", store);
-  //   setStoredStoreId(store.storeId);
-  //   setSelectedStoreId(store.storeId);
-  //   setSelectStore(false);
-  //   selectStoreMutation.mutate(store.storeId);
-  // };
-
   // const showNoStoreModal = stores.length === 0;
   // const showStoreSelectionModal = stores.length > 1 && selectStore;
 
@@ -142,9 +168,10 @@ export default function DashboardLayout() {
           sidebarOpen={sidebarOpen}
           onToggleSidebar={() => setSidebarOpen((prev) => !prev)}
           user={user}
-          stores={stores}
+          stores={null}
           currentStore={null}
-          onSwitchStore={(store) => selectStoreMutation.mutate(store.storeId)}
+          onSwitchStore={handleSelectStore}
+          onOpenStores={undefined}
           isSwitchingStore={selectStoreMutation.isPending}
           onLogout={() => clearSession()}
         />

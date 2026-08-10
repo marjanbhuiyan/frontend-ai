@@ -26,11 +26,20 @@ export async function getStoresApi(): Promise<ApiResponse<StoreInfo[]>> {
 }
 
 /**
+ * Returns every store the current user has access to (used by the store
+ * switcher in the dashboard header when the dropdown is opened).
+ */
+export async function getMyStoresApi(): Promise<ApiResponse<StoreInfo[]>> {
+  const { data } = await apiClient.get<ApiResponse<StoreInfo[]>>("/stores/my-stores");
+  return data;
+}
+
+/**
  * Selects a store and returns a new session (access token, user, menus,
  * permissions) scoped to that store.
  */
 export async function selectStoreApi(storeId: number): Promise<StoreSelectResponse> {
-  const { data } = await apiClient.post<StoreSelectResponse>("/stores/select", { storeId });
+  const { data } = await apiClient.post<StoreSelectResponse>("/auth/select-store", { storeId });
   return data;
 }
 
