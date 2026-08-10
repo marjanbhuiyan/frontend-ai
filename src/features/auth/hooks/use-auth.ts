@@ -72,15 +72,14 @@ export function useRegister() {
 export function useLogout(): UseMutationResult<void, Error, void> {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { setUser, setPermissions, setMenus } = useAuth();
 
   return useMutation({
     mutationFn: logoutApi,
     onSuccess: async () => {
       clearToken();
-      setUser(null);
-      setPermissions([]);
-      setMenus([]);
+      // Remove the persisted Zustand session (user, token, stores, menus,
+      // permissions) after the backend logout succeeds.
+      useAuthStore.getState().clearSession();
       queryClient.clear();
       toast.success("Logged out successfully.");
       navigate(ROUTES.LOGIN);
