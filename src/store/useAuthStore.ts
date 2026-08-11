@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
 import type { User, Menu, StoreInfo } from "@/features/auth/types";
 
 export interface Session {
@@ -29,7 +28,6 @@ interface AuthState {
 }
 
 export const useAuthStore = create<AuthState>()(
-  persist(
     (set) => ({
       user: null,
       accessToken: null,
@@ -64,19 +62,5 @@ export const useAuthStore = create<AuthState>()(
 
           isAuthenticated: false,
         }),
-    }),
-    {
-      name: "auth-storage",
-      storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({
-        user: state.user,
-        accessToken: state.accessToken,
-        stores: state.stores,
-        menus: state.menus,
-        permissions: state.permissions,
-        forbiddenRoutes: state.forbiddenRoutes,
-        isAuthenticated: state.isAuthenticated,
-      }),
-    }
-  )
+    })
 );

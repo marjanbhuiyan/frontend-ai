@@ -1,20 +1,23 @@
-import { useEffect, useRef } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { refreshSession } from "@/app/api/app-api";
 import { useAuthStore } from "@/store/useAuthStore";
 
 export function useBootstrap() {
-  const clearSession = useAuthStore((state) => state.clearSession);
-  const didInit = useRef(false);
+  const setSession = useAuthStore((s) => s.setSession);
 
-  useEffect(() => {
-    if (didInit.current) return;
-    didInit.current = true;
+  return useQuery({
+    queryKey: ["bootstrap"],
 
-    const { accessToken } = useAuthStore.getState();
+    queryFn: async () => {
+      const session = await refreshSession();
 
-    if (!accessToken) {
-      clearSession();
-    }
-  }, [clearSession]);
+      setSession(session);
 
-  return { isPending: false };
+      return session;
+    },
+
+    retry: false,
+
+    staleTime: Infinity,
+  });
 }
