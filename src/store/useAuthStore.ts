@@ -1,17 +1,5 @@
 import { create } from "zustand";
-import type { User, Menu, StoreInfo } from "@/features/auth/types";
-
-export interface Session {
-  user: User;
-  accessToken: string;
-  store?: StoreInfo;
-  stores?: StoreInfo[];
-  menus: Menu[];
-  permissions: string[];
-  forbiddenRoutes?: string[];
-}
-
-export type { User, Menu, StoreInfo };
+import type { User, Menu, StoreInfo, Session } from "@/features/auth/types";
 
 interface AuthState {
   user: User | null;

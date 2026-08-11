@@ -1,6 +1,20 @@
 import { z } from "zod";
 import { registertSchema, loginSchema } from "@/features/auth/schemas";
 
+ 
+
+
+export interface Session {
+  user: User;
+  accessToken: string;
+  store?: StoreInfo;
+  stores?: StoreInfo[];
+  menus: Menu[];
+  permissions: string[];
+  forbiddenRoutes?: string[];
+}
+
+
 export interface User {
   id: string;
   email: string;
@@ -21,8 +35,8 @@ export interface Menu {
   id?: string;
   title: string;
   type: "group" | "item" | "collapse";
-  route?: string;
-  url?: string;
+  api?: string;
+  path?: string;
   icon?: string;
   children?: Menu[];
   componentName?: string;
@@ -32,6 +46,7 @@ export interface Menu {
     variant: "teal" | "red" | "blue" | "green" | "default";
   };
 }
+
 export interface SessionResponse {
   accessToken: string;
   user: User;
