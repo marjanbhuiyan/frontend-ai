@@ -5,8 +5,6 @@ import { createBrowserRouter, RouterProvider, type RouteObject } from "react-rou
 import { GlobalLoader } from "@/components/common/global-loader";
 import { HomePage } from "@/pages/home";
 import { RegisterPage } from "@/pages/auth/register";
-import { DashboardPage } from "@/pages/dashboard/dashboard";
-import { UsersPage } from "@/pages/users/users";
 import { ProductsPage } from "@/pages/products/products";
 import { ProtectedRoute } from "@/app/routes/ProtectedRoute";
 import { PublicRoute } from "@/app/routes/public-route";
@@ -16,6 +14,12 @@ const LoginPage = lazy(
 );
 const DashboardLayout = lazy(
   () => import("@/features/dashboard/layouts/dashboard-layout")
+);
+const UsersPage = lazy(
+  () => import("@/features/users/pages/users-page")
+);
+const DashboardPage = lazy(
+  () => import("@/features/dashboard/pages/dashboard/dashboard-page")
 );
 
 export const router = createBrowserRouter([
@@ -41,12 +45,19 @@ export const router = createBrowserRouter([
   {
     element: <ProtectedRoute />,
     children: [
-      {
-        element: <DashboardLayout />,
-        children: [
           {
             path: "/dashboard",
-            element: <DashboardPage />,
+            element: <DashboardLayout />,
+            children: [
+              {
+                index: true,
+                element: <DashboardPage />,
+              },
+              {
+                path: "users",
+                element: <UsersPage />,
+              },
+            ],
           },
 
           {
@@ -60,9 +71,8 @@ export const router = createBrowserRouter([
           },
         ],
       },
-    ],
-  },
 ] as RouteObject[]);
+
 export default function App() {
   return (
     <AppProviders>
