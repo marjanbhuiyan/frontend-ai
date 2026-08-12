@@ -1,4 +1,4 @@
-import { useDataTableContext } from "./context";
+import { useDataTableContext } from "@/components/data-table/context";
 
 export function DataTableBulkActions<T>(): React.JSX.Element {
   const { table, bulkActions } = useDataTableContext<T>();

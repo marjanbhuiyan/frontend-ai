@@ -7,7 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { useDataTableContext } from "./context";
+import { useDataTableContext } from "@/components/data-table/context";
 
 export function DataTableViewOptions<T>(): React.JSX.Element {
   const { table } = useDataTableContext<T>();
@@ -15,7 +15,11 @@ export function DataTableViewOptions<T>(): React.JSX.Element {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <Button variant="outline" size="icon">
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-9 w-9 border-gray-300 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+        >
           <svg
             className="h-4 w-4"
             viewBox="0 0 24 24"

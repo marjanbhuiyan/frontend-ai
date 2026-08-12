@@ -9,9 +9,9 @@ import {
   type VisibilityState,
   type OnChangeFn,
 } from "@tanstack/react-table";
-import { DataTableContext, type DataTableContextValue } from "./context";
-import { useDataTable } from "./hooks/useDataTable";
-import type { TableConfig } from "./types";
+import { DataTableContext, type DataTableContextValue } from "@/components/data-table/context";
+import { useDataTable } from "@/components/data-table/hooks/useDataTable";
+import type { TableConfig } from "@/components/data-table/types";
 
 interface DataTableProviderProps<T> {
   config: TableConfig<T>;

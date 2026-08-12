@@ -5,6 +5,9 @@ import type { User, UserStatus } from "./types";
 const avatarColors = ["bg-blue-500", "bg-green-500", "bg-amber-500", "bg-pink-500", "bg-purple-500"];
 
 function getInitials(name: string): string {
+  // Guard against rows missing the `name` field (e.g. a list endpoint that
+  // returns users without a display name) — mirrors the sidebar's getInitials.
+  if (!name) return "U";
   return name
     .split(" ")
     .map((p) => p[0])
@@ -14,6 +17,7 @@ function getInitials(name: string): string {
 }
 
 export const statusStyles: Record<UserStatus, string> = {
+  // Tinted pill styles — soft background + colored text + tinted border, matching the reference image
   Complete: "bg-green-50 text-green-600 border-green-200",
   Pending: "bg-amber-50 text-amber-600 border-amber-200",
   Canceled: "bg-red-50 text-red-500 border-red-200",
@@ -77,7 +81,7 @@ export const userColumns: ColumnDef<User>[] = [
       const status = row.getValue("status") as UserStatus;
       return (
         <span
-          className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${statusStyles[status]}`}
+          className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold ${statusStyles[status]}`}
         >
           {status}
         </span>

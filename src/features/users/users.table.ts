@@ -3,16 +3,26 @@ import { userColumns } from "./users.columns";
 import type { User } from "./types";
 
 export const usersTableConfig = {
-  title: "Users ss",
+  title: "Users",
   columns: userColumns,
+  // Server mode — the generic DataTable fetches this endpoint on mount with
+  // page/limit/search/sort params, instead of rendering static mock data.
+  // queryKey matches the QUERY_KEYS.USERS convention.
+  endpoint: "/users",
+  queryKey: "users",
   enableSearch: true,
   enableRowSelection: true,
   enableColumnVisibility: true,
+  enableBulkActions: true,
+  enableFilters: true,
+  api: "/api/users",
   enablePagination: true,
   enableRowActions: true,
-  enableExport: false,
+  /* ── Enabled export to show download icon button, matching the image ── */
+  enableExport: true,
   enableRefresh: false,
   enableCreate: true,
+  /* ── Updated placeholder to show dynamic record count ── */
   searchPlaceholder: `Search records...`,
   createButtonLabel: "Add Customer",
   defaultPageSize: 10,

@@ -1,7 +1,7 @@
 import { lazy, type LazyExoticComponent, type ComponentType } from "react";
 
 const DashboardPage = lazy(() => import("@/features/dashboard/pages/dashboard/dashboard-page"));
-const UserManagementPage = lazy(() => import("@/features/users/pages/UsersPage"));
+const UserManagementPage = lazy(() => import("@/features/users/pages/user.page"));
 const MenuManagementPage = lazy(() => import("@/features/dashboard/pages/menu-management"));
 const RoleManagementPage = lazy(() => import("@/features/dashboard/pages/role-management"));
 const CustomerManagementPage = lazy(() => import("@/features/dashboard/pages/customer-management"));

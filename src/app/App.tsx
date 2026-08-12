@@ -16,7 +16,7 @@ const DashboardLayout = lazy(
   () => import("@/features/dashboard/layouts/dashboard-layout")
 );
 const UsersPage = lazy(
-  () => import("@/features/users/pages/users-page")
+  () => import("@/features/users/pages/user.page")
 );
 const DashboardPage = lazy(
   () => import("@/features/dashboard/pages/dashboard/dashboard-page")
