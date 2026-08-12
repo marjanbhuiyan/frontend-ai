@@ -29,10 +29,10 @@ export default function NotFoundPage(): React.JSX.Element {
         The page you're looking for doesn't exist or has been moved.
       </p>
 
-      <Link to={ROUTES.HOME} className="mt-8">
+      <Link to={ROUTES.REGISTER} className="mt-8">
         <Button variant="outline" className="gap-2">
           <ArrowLeft className="h-4 w-4" />
-          Back to home
+          Register
         </Button>
       </Link>
     </div>

@@ -1,13 +1,16 @@
 import { AppProviders } from "@/app/AppProviders";
 import { lazy, Suspense } from "react";
 import { Bootstrap } from "@/app/Bootstrap";
-import { createBrowserRouter, RouterProvider, type RouteObject } from "react-router-dom";
+import { BrowserRouter, createBrowserRouter, RouterProvider, type RouteObject } from "react-router-dom";
 import { GlobalLoader } from "@/components/common/global-loader";
 import { HomePage } from "@/pages/home";
 import { RegisterPage } from "@/pages/auth/register";
 import { ProductsPage } from "@/pages/products/products";
 import { ProtectedRoute } from "@/app/routes/ProtectedRoute";
 import { PublicRoute } from "@/app/routes/public-route";
+import { AppRoutes } from "@/app/router/app-router";
+// import { generateRoutesFromMenus } from "@/app/router/route-generator";
+
 
 const LoginPage = lazy(
   () => import("@/features/auth/pages/login-page")
@@ -48,16 +51,20 @@ export const router = createBrowserRouter([
           {
             path: "/dashboard",
             element: <DashboardLayout />,
-            children: [
-              {
-                index: true,
-                element: <DashboardPage />,
-              },
-              {
-                path: "users",
-                element: <UsersPage />,
-              },
-            ],
+            // children: [
+            //   {
+            //     index: true,
+            //     element: <DashboardPage />,
+            //   },
+            //   {
+            //     path: "users",
+            //     element: <UsersPage />,
+            //   },
+            // ],
+            // children: [
+            //         ...generateRoutesFromMenus(menus),
+            //         { path: "*", element: <DashboardFallback /> },
+            //       ],
           },
 
           {
@@ -78,7 +85,10 @@ export default function App() {
     <AppProviders>
       <Bootstrap>
         <Suspense fallback={<GlobalLoader message="Loading page..." />}>
-          <RouterProvider router={router} />
+        <BrowserRouter>
+          <AppRoutes />
+        </BrowserRouter>
+          {/* <RouterProvider router={router} /> */}
         </Suspense>
       </Bootstrap>
     </AppProviders>

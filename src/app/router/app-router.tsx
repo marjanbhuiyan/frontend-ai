@@ -1,7 +1,7 @@
 import { Navigate, useRoutes, BrowserRouter } from "react-router-dom";
-import {
-  PublicOnlyRoute,
-} from "@/features/auth/providers/protected-route";
+// import {
+//   PublicOnlyRoute,
+// } from "@/features/auth/providers/protected-route";
 import { ROUTES } from "@/constants";
 import { lazy, Suspense } from "react";
 import { GlobalLoader } from "@/components/common/global-loader";
@@ -13,7 +13,9 @@ import { useAuthStore } from "@/store/useAuthStore";
 
 
 import type React from "react";
-import { ProtectedRoute } from "@/features/auth/providers/protected-route";
+import { ProtectedRoute } from "@/app/routes/ProtectedRoute";
+import { PublicRoute } from "@/app/routes/public-route";
+// import { ProtectedRoute } from "@/features/auth/providers/protected-route";
 
 const NotFoundPage = lazy(
   () => import("@/components/shared/not-found-page")
@@ -48,22 +50,51 @@ export function AppRoutes() {
       errorElement: <ErrorPage />,
     },
     {
+      /* FIXED: closing tag was `</PublicOnlyRoute>` (mismatch) — now `</PublicRoute>`
+         to match the opening `<PublicRoute>` imported above. */
       path: ROUTES.LOGIN,
-      element: <PublicOnlyRoute><LoginPage /></PublicOnlyRoute>,
+      element: <PublicRoute />,
+      children: [
+        {
+          index: true,
+          element: <LoginPage />,
+        },
+      ],
       errorElement: <ErrorPage />,
     },
     {
       path: ROUTES.REGISTER,
-      element: <PublicOnlyRoute><RegisterPage /></PublicOnlyRoute>,
+      /* FIXED: opening tag was `<PublicOnlyRoute>` (not imported) — now `<PublicRoute>`
+         to match the closing `</PublicRoute>` and the imported component. */
+      // element: <PublicRoute />,
+      children: [
+        {
+          index: true,
+          element: <RegisterPage />,
+        },
+      ],
       errorElement: <ErrorPage />,
     },
     {
-      path: ROUTES.DASHBOARD,
-      element: <ProtectedRoute><DashboardLayout /></ProtectedRoute>,
+      /* FIXED (absolute-path error): menu-generated routes carry ABSOLUTE
+         paths from the backend (`/dashboard`, `/dashboard/users`, `/settings`,
+         ...). Nesting them under `path: "/dashboard"` made any sibling absolute
+         path invalid — "Absolute route path '/dashboard' nested under path
+         '/dashboard/' is not valid". Now `ProtectedRoute` + `DashboardLayout`
+         are PATHLESS layout routes, so the menu `api` paths become the real
+         routes and match the sidebar's `item.path` navigation.
+         `*` catch-all keeps unmatched URLs inside the dashboard chrome. */
+      element: <ProtectedRoute />,
       errorElement: <ErrorPage />,
       children: [
-        ...generateRoutesFromMenus(menus),
-        { path: "*", element: <DashboardFallback /> },
+        {
+          element: <DashboardLayout />,
+          children: [
+            ...generateRoutesFromMenus(menus),
+            { index: true, element: <DashboardFallback /> },
+            { path: "*", element: <DashboardFallback /> },
+          ],
+        },
       ],
     },
     {
@@ -83,7 +114,7 @@ export function AppRoutes() {
 
 export function AppRouter(): React.JSX.Element {
     const bootstrap = useBootstrap();
-  
+
     if (bootstrap.isPending) {
       return (
         <GlobalLoader
@@ -92,11 +123,11 @@ export function AppRouter(): React.JSX.Element {
         />
       );
     }
-  
+
     if (bootstrap.isError) {
       return  <Navigate to={ROUTES.LOGIN} replace />
     }
-  
+
     return <BrowserRouter>
         <Suspense fallback={<GlobalLoader message="Loading page..." />}>
           <AppRoutes />

@@ -14,25 +14,37 @@ export function DataTableViewOptions<T>(): React.JSX.Element {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
-        <Button
-          variant="outline"
-          size="icon"
-          className="h-9 w-9 border-gray-300 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
-        >
-          <svg
-            className="h-4 w-4"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
+      {/* FIXED nested <button> (<button> inside <button> → hydration error):
+          `<Button>` renders a <button>, and `<DropdownMenuTrigger>` (base-ui
+          Menu.Trigger) ALSO renders its own default <button> when given plain
+          children — producing `<button><button>…`. The codebase's convention
+          (see profile-menu.tsx) is the `render` prop, which merges the trigger
+          behavior ONTO the button instead of wrapping it.
+          OLD:
+          <DropdownMenuTrigger>
+            <Button variant="outline" ...>
+      */}
+      <DropdownMenuTrigger
+        render={
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-9 w-9 border-gray-300 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
           >
-            <rect x="3" y="3" width="18" height="18" rx="2" />
-            <line x1="3" y1="9" x2="21" y2="9" />
-            <line x1="9" y1="3" x2="9" y2="21" />
-          </svg>
-        </Button>
-      </DropdownMenuTrigger>
+            <svg
+              className="h-4 w-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <line x1="3" y1="9" x2="21" y2="9" />
+              <line x1="9" y1="3" x2="9" y2="21" />
+            </svg>
+          </Button>
+        }
+      />
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
         <DropdownMenuSeparator />
