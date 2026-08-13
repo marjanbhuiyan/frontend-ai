@@ -41,7 +41,6 @@ export function AppRoutes() {
   // Single source of truth: the persisted Zustand store carries the backend
   // filtered (permission + store scoped) menu tree across reloads.
   const { menus } = useAuthStore();
-  // const { menus } = useAuth(); // (legacy context source — see useAuthStore)
 
   const routes = [
     {

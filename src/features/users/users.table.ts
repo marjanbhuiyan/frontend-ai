@@ -1,6 +1,6 @@
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import { userColumns } from "./users.columns";
-import type { User } from "./types";
+import type { User } from "@/features/users/types";
 
 export const usersTableConfig = {
   title: "Users",
@@ -15,7 +15,6 @@ export const usersTableConfig = {
   enableColumnVisibility: true,
   enableBulkActions: true,
   enableFilters: true,
-  api: "/api/users",
   enablePagination: true,
   enableRowActions: true,
   /* ── Enabled export to show download icon button, matching the image ── */

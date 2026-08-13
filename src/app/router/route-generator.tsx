@@ -3,25 +3,9 @@ import { ComponentRegistry } from "@/app/router/component-registry";
 import NotImplementedPage from "@/app/pages/not-implemented-page";
 import type { Menu } from "@/app/types";
 
-/**
- * Resolves the registered page component for a menu item.
- *
- * Why a tolerant resolver: the backend may send the component identifier under
- * different keys (`component` vs `componentName` — the menu-management form and
- * `features/auth/types` both use `componentName`) and/or with a different case
- * ("dashboard" instead of "Dashboard"). A strict single-key lookup therefore
- * returned `undefined` and every route fell back to NotImplementedPage.
- *
- * Lookup order:
- *   1. exact match on `menu.component`
- *   2. exact match on `menu.componentName`
- *   3. case-insensitive match on either (tolerates a trailing "page")
- * Returns null when nothing matches so the caller keeps NotImplementedPage.
- */
 function resolveMenuComponent(menu: Menu) {
     const candidates = [menu.component, menu.componentName];
 
-    // 1) exact matches on either field
     for (const name of candidates) {
         if (!name) continue;
         const exact =
@@ -44,14 +28,7 @@ function resolveMenuComponent(menu: Menu) {
     return null;
 }
 
-/**
- * Normalizes the backend `api` value into a valid absolute route path.
- *
- * Why: after the dashboard layout became PATHLESS (so absolute menu paths are
- * valid), the generated route path must be absolute and clean. The backend may
- * send "/dashboard/users", "dashboard/users" or "/dashboard/users/" — collapse
- * duplicate slashes, trim edges, and guarantee the leading "/".
- */
+
 function normalizeMenuPath(api: string): string {
     const p = api.trim().replace(/^\/+/, "").replace(/\/+$/, "");
     if (!p) return "/";

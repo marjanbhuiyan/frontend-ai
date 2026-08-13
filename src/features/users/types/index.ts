@@ -1,11 +1,11 @@
-export type UserStatus = "Complete" | "Pending" | "Canceled";
+export type UserStatus = "Active" | "Pending" | "Inactive";
 
 export interface User {
   id: number;
   name: string;
   email: string;
   avatar?: string;
-  contact: string;
+  phone: string;
   age: number;
   country: string;
   status: UserStatus;
