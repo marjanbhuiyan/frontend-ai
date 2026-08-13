@@ -39,7 +39,7 @@ export function AppProviders({
       <Toaster
         richColors
         closeButton
-        position="top-right"
+        position="bottom-right"
       />
     </QueryClientProvider>
   );

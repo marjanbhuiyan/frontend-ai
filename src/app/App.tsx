@@ -2,7 +2,11 @@ import { AppProviders } from "@/app/AppProviders";
 import { lazy, Suspense } from "react";
 import { Bootstrap } from "@/app/Bootstrap";
 import { BrowserRouter, createBrowserRouter, RouterProvider, type RouteObject } from "react-router-dom";
-import { GlobalLoader } from "@/components/common/global-loader";
+// GlobalLoader no longer used directly in App.tsx — it was only the Suspense
+// fallback here. Bootstrap (src/app/Bootstrap.tsx) renders GlobalLoader during
+// app init/reload, and in-app lazy routing now uses PageLoader instead.
+// import { GlobalLoader } from "@/components/common/global-loader";
+import { PageLoader } from "@/components/common/page-loader";
 import { HomePage } from "@/pages/home";
 import { RegisterPage } from "@/pages/auth/register";
 import { ProductsPage } from "@/pages/products/products";
@@ -84,12 +88,12 @@ export default function App() {
   return (
     <AppProviders>
       <Bootstrap>
-        <Suspense fallback={<GlobalLoader message="Loading page..." />}>
+        {/* <Suspense fallback={<PageLoader message="Loading page..." />}> */}
         <BrowserRouter>
           <AppRoutes />
         </BrowserRouter>
           {/* <RouterProvider router={router} /> */}
-        </Suspense>
+      {/* </Suspense> */}
       </Bootstrap>
     </AppProviders>
   );

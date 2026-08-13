@@ -10,8 +10,18 @@ export function useBootstrap() {
 
     queryFn: async () => {
       const session = await refreshSession();
-
-      setSession(session);
+      const { data } = session;
+      setSession({
+        accessToken: data.accessToken,
+        user: data.user,
+        stores: Array.isArray(data.stores)
+          ? data.stores
+          : data.stores
+            ? [data.stores]
+            : [],
+        permissions: data.permissions ?? [],
+        menus: data.menus ?? [],
+      });
 
       return session;
     },

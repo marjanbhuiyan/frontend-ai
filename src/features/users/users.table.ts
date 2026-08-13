@@ -19,8 +19,9 @@ export const usersTableConfig = {
   enableRowActions: true,
   /* ── Enabled export to show download icon button, matching the image ── */
   enableExport: true,
-  enableRefresh: false,
-  enableCreate: true,
+  enableRefresh: true,
+  /* ── Show and Hide add button  ── */
+  enableCreate: false,
   /* ── Updated placeholder to show dynamic record count ── */
   searchPlaceholder: `Search records...`,
   createButtonLabel: "Add Customer",

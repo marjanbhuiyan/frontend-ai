@@ -133,5 +133,5 @@ export const userColumns: ColumnDef<User>[] = [
              </span>
       );
     },
-  },
+  }
 ];
