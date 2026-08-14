@@ -1,4 +1,13 @@
+/* ──────────────────────────────────────────────────────────────────────────
+ * BULK ACTIONS BAR — shown when rows are selected.
+ *
+ * NOTE: The primary rendering of this bar is now handled dynamically inside
+ * DataTableHeader (which replaces the column headers with the selected-state
+ * bar matching the screenshot's peach/salmon style). This standalone component
+ * is kept for backward compatibility and can be used outside the table header.
+ * ────────────────────────────────────────────────────────────────────────── */
 import { useDataTableContext } from "@/components/data-table/context";
+import { Trash2 } from "lucide-react";
 
 export function DataTableBulkActions<T>(): React.JSX.Element {
   const { table, bulkActions } = useDataTableContext<T>();
@@ -7,18 +16,23 @@ export function DataTableBulkActions<T>(): React.JSX.Element {
   if (selectedCount === 0 || bulkActions.length === 0) return <></>;
 
   return (
-    <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 border-b border-blue-100">
-      <span className="text-sm text-blue-700 font-medium">
+    /* ── Peach/salmon selected-state bar matching screenshot ── */
+    <div className="flex items-center gap-2 rounded-t-lg border-b border-orange-100 bg-orange-50 px-4 py-2.5">
+      <span className="text-sm font-semibold text-orange-600">
         {selectedCount} selected
       </span>
       {bulkActions.map((action, index) => (
         <button
           key={index}
           onClick={() => action.action(table.getSelectedRowModel().rows)}
-          className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium text-blue-700 hover:bg-blue-100 transition-colors"
+          className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-orange-500 transition-colors hover:bg-orange-100 hover:text-orange-700"
+          title={action.label}
         >
-          {action.icon && <action.icon className="h-3.5 w-3.5" />}
-          {action.label}
+          {action.icon ? (
+            <action.icon className="h-4 w-4" />
+          ) : (
+            <Trash2 className="h-4 w-4" />
+          )}
         </button>
       ))}
     </div>

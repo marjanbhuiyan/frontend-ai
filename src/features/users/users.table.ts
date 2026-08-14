@@ -27,10 +27,25 @@ export const usersTableConfig = {
   createButtonLabel: "Add Customer",
   defaultPageSize: 10,
   pageSizeOptions: [10, 25, 50],
+  /* ── Bulk actions for selected rows ──
+      The selected-state bar (peach/orange) shows these actions on the right
+      when one or more rows are checked. */
+  bulkActions: [
+    {
+      label: "Delete selected",
+      icon: Trash2,
+      action: (rows: { original: User }[]) => {
+        console.log("Delete selected users:", rows.map((r) => r.original.id));
+      },
+    },
+  ],
   rowActions: [
+    /* `primary: true` → shown as an inline icon button in the row (View).
+       Actions without `primary` are grouped into the kebab "..." dropdown. */
     {
       label: "View",
       icon: Eye,
+      primary: true,
       onClick: (user: User) => console.log("View user:", user.id),
     },
     {

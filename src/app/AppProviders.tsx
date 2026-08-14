@@ -2,6 +2,7 @@ import { useState, type ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { DEFAULTS } from "@/constants";
 
 export function AppProviders({
@@ -30,7 +31,9 @@ export function AppProviders({
 
   return (
     <QueryClientProvider client={queryClient}>
-      {children}
+      <TooltipProvider>
+        {children}
+      </TooltipProvider>
 
       {import.meta.env.DEV && (
         <ReactQueryDevtools initialIsOpen={false} />

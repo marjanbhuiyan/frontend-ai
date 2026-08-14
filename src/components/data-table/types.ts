@@ -36,6 +36,10 @@ export interface RowAction<T> {
   variant?: "default" | "destructive";
   onClick: (row: T) => void | Promise<void>;
   permission?: string;
+  /* Primary actions render as inline icon buttons in the row.
+     Non-primary (or all when none are flagged primary) go into the row's
+     kebab "..." dropdown. Configure via the table config `rowActions`. */
+  primary?: boolean;
 }
 
 export interface TableState {

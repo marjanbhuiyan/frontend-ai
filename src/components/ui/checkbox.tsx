@@ -24,11 +24,14 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
         aria-checked={checked === "indeterminate" ? "mixed" : checked}
         data-state={checked === true ? "checked" : checked === "indeterminate" ? "indeterminate" : "unchecked"}
         className={cn(
-          "peer h-4 w-4 shrink-0 rounded border transition-colors outline-none",
-          "border-gray-300 bg-white hover:bg-gray-50 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2",
+          /* FIXED: square shape (rounded-sm for subtle rounding), soft hover bg
+             — unchecked shows bg-gray-100 on hover, checked/indeterminate
+             shows bg-blue-700 so the hover is visible against the blue fill. */
+          "peer h-4 w-4 shrink-0 rounded-sm border transition-colors outline-none",
+          "border-gray-300 bg-white hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2",
           "disabled:cursor-not-allowed disabled:opacity-50",
-          checked === true && "border-blue-600 bg-blue-600 hover:bg-blue-600",
-          checked === "indeterminate" && "border-blue-600 bg-blue-600 hover:bg-blue-600",
+          checked === true && "border-blue-600 bg-blue-600 hover:bg-blue-700",
+          checked === "indeterminate" && "border-blue-600 bg-blue-600 hover:bg-blue-700",
           className
         )}
         onClick={() => {
@@ -68,6 +71,7 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
               stroke="currentColor"
               strokeWidth={2}
               strokeLinecap="round"
+              strokeLinejoin="round"
             />
           </svg>
         )}

@@ -34,7 +34,7 @@ export function DataTableBody<T>(): React.JSX.Element {
             <td className="px-4 py-3.5 align-middle whitespace-nowrap pl-5 [&:has([role=checkbox])]:pr-0">
               <Checkbox
                 checked={row.getIsSelected()}
-                onCheckedChange={row.getToggleSelectedHandler()}
+                onCheckedChange={(checked) => row.toggleSelected(checked)}
                 aria-label="Select row"
               />
             </td>

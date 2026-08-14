@@ -65,7 +65,11 @@ export const userColumns: ColumnDef<User>[] = [
   },
   {
     accessorKey: "name",
-    header: "USER INFO",
+    /* FIXED: changed from "USER INFO" (ALL CAPS) to "User info" (title case)
+       so the CSS `capitalize` class in DataTableHeader actually works —
+       capitalize only capitalizes the first letter of each word, it cannot
+       lowercase already-uppercase strings. */
+    header: "User info",
     enableSorting: true,
     enableHiding: true,
     cell: ({ row }) => {
@@ -90,7 +94,7 @@ export const userColumns: ColumnDef<User>[] = [
   },
   {
     accessorKey: "contact",
-    header: "CONTACT",
+    header: "Contact",
     enableSorting: false,
     enableHiding: true,
     cell: ({ row }) => {
@@ -105,19 +109,19 @@ export const userColumns: ColumnDef<User>[] = [
   },
   {
     accessorKey: "age",
-    header: "AGE",
+    header: "Age",
     enableSorting: true,
     enableHiding: true,
   },
   {
     accessorKey: "country",
-    header: "COUNTRY",
+    header: "Country",
     enableSorting: true,
     enableHiding: true,
   },
   {
     accessorKey: "status",
-    header: "STATUS",
+    header: "Status",
     enableSorting: true,
     enableHiding: true,
     cell: ({ row }) => {
