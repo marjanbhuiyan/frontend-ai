@@ -73,7 +73,6 @@ export const userColumns: ColumnDef<User>[] = [
     enableSorting: true,
     enableHiding: true,
     cell: ({ row }) => {
-      console.log("original", row.original);
       const user = row.original;
       const colorClass = avatarColors[user.id % avatarColors.length];
       return (

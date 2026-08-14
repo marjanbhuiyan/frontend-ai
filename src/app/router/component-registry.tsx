@@ -5,7 +5,10 @@ const UserManagementPage = lazy(() => import("@/features/dashboard/pages/user-ma
 const MenuManagementPage = lazy(() => import("@/features/dashboard/pages/menu-management"));
 const RoleManagementPage = lazy(() => import("@/features/dashboard/pages/role-management"));
 const CustomerManagementPage = lazy(() => import("@/features/dashboard/pages/customer-management"));
-const StoreManagementPage = lazy(() => import("@/features/dashboard/pages/store-management"));
+/* ── OLD: manual table with inline state/dialogs — replaced by DataTable-based page ── */
+// const StoreManagementPage = lazy(() => import("@/features/dashboard/pages/store-management"));
+/* ── NEW: DataTable-based store list using auth store data ── */
+const StoreManagementPage = lazy(() => import("@/features/stores/pages/store.page"));
 const AccessManagementPage = lazy(() => import("@/features/dashboard/pages/access-management"));
 const SettingsPage = lazy(() => import("@/features/dashboard/pages/settings"));
 

@@ -16,10 +16,14 @@ import type { TableConfig } from "@/components/data-table/types";
 interface DataTableProviderProps<T> {
   config: TableConfig<T>;
   data?: T[];
+  /* ADDED: external loading signal from the parent page.
+     When provided, overrides the internal query.isLoading so the skeleton
+     renders during the parent's fetch lifecycle. */
+  externalLoading?: boolean;
   children: ReactNode;
 }
 
-export function DataTableProvider<T>({ config, data: dataOverride, children }: DataTableProviderProps<T>) {
+export function DataTableProvider<T>({ config, data: dataOverride, externalLoading, children }: DataTableProviderProps<T>) {
   const {
     state,
     setState,
@@ -78,8 +82,13 @@ export function DataTableProvider<T>({ config, data: dataOverride, children }: D
       config,
       state,
       setState,
-      isLoading: query.isLoading,
-      isFetching: query.isFetching,
+      /* FIXED: when data is passed directly (dataOverride), the query is
+         disabled so query.isLoading stays true forever, causing the skeleton
+         to show instead of the actual data. Override to false for direct mode.
+         ADDED: externalLoading takes priority — the parent page's useQuery
+         owns the loading lifecycle when no endpoint is configured. */
+      isLoading: externalLoading ?? (isUsingDirectData ? false : query.isLoading),
+      isFetching: externalLoading ?? (isUsingDirectData ? false : query.isFetching),
       error: query.error as Error | null,
       refetch: query.refetch,
       data,
