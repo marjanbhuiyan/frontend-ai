@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type{ UseFormReturn } from "react-hook-form";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
@@ -25,4 +26,14 @@ export const createStoreSchema = z.object({
     )
     .optional(),
 });
+
 export type CreateStoreForm = z.infer<typeof createStoreSchema>;
+
+export interface CreateFormProps {
+  form: UseFormReturn<CreateStoreForm>;
+  // OLD: form used to close the dialog after an internal mutation succeeded.
+  // onSuccess?: () => void;
+  /* NEW: the parent dialog owns the mutation and passes the submit handler,
+     so the form becomes a controlled presentational component. */
+  onSubmit: (data: CreateStoreForm) => void | Promise<void>;
+}
