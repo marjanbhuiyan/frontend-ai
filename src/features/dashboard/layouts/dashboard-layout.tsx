@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import type { StoreInfo } from "@/features/auth/types";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useMyStores } from "@/features/store/hooks/use-store";
+import OnboardingGate from "@/features/store/components/onboarding-gate";
 
 import type React from "react";
 
@@ -205,6 +206,12 @@ export default function DashboardLayout() {
         isSwitching={selectStoreMutation.isPending}
         onSelect={handleSelectStore}
       /> */}
+
+      {/* Post-login onboarding gate — subscription → create store → select store.
+          Renders `null` whenever no modal is needed, so the dashboard chrome
+          above is unaffected. The legacy NoStoreAccessModal/StoreSelectionModal
+          blocks above are intentionally left commented out. */}
+      <OnboardingGate />
     </div>
   );
 }

@@ -41,8 +41,8 @@ export function useLogin(){
   return useMutation({
     mutationFn: (credentials: LoginInput) => loginApi(credentials),
     onSuccess: async (res) => {
-      const { accessToken, user, menus, stores, permissions, forbiddenRoutes } = res?.data;
-      useAuthStore.getState().setSession({ accessToken, user, stores, menus, permissions, forbiddenRoutes });
+      const { accessToken, user, menus, stores, permissions, forbiddenRoutes, subscription } = res?.data;
+      useAuthStore.getState().setSession({ accessToken, user, stores, menus, permissions, forbiddenRoutes, subscription });
       toast.success(res.message);
       navigate(ROUTES.DASHBOARD)
     },
@@ -53,10 +53,26 @@ export function useLogin(){
 }
 
 export function useRegister() {
+  const navigate = useNavigate();
+
   return useMutation({
     mutationFn: (formData: FormData) => registerApi(formData),
     onSuccess: async (res) => {
+      // Registration returns a full session (access token, user, subscription,
+      // stores) so the user is logged in immediately and forwarded to the
+      // dashboard, where the onboarding gate picks the plan / creates a store.
+      const { accessToken, user, menus, stores, permissions, forbiddenRoutes, subscription } = res?.data;
+      useAuthStore.getState().setSession({
+        accessToken,
+        user,
+        stores: stores ?? [],
+        menus: menus ?? [],
+        permissions: permissions ?? [],
+        forbiddenRoutes: forbiddenRoutes ?? [],
+        subscription,
+      });
       toast.success(res.message);
+      navigate(ROUTES.DASHBOARD)
     },
     onError: (error) => {
       if (error instanceof AxiosError){

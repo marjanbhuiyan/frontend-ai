@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Store as StoreIcon, CircleAlertIcon, XIcon } from "lucide-react";
@@ -38,10 +39,21 @@ import { useCreateStore } from "@/features/store/hooks/use-store";
 
 // type CreateStoreFormData = z.infer<typeof createStoreSchema>;
 
-function CreateStoreModal({ open }: { open: boolean }): React.JSX.Element {
+/* Optional `onSuccess` lets the onboarding gate know a store was created so it
+   can re-check the store count and advance (closing this modal). The original
+   `{ open }` signature is kept working via the optional prop. */
+function CreateStoreModal({ open, onSuccess }: { open: boolean; onSuccess?: () => void }): React.JSX.Element {
   // const [logoPreview, setLogoPreview] = useState<string | null>(null);
   // const fileInputRef = useRef<HTMLInputElement>(null);
   const createStore = useCreateStore();
+
+  // Notify the caller once the create-store mutation succeeds so the gate can
+  // refetch the store list and decide the next step (1 store -> nothing).
+  useEffect(() => {
+    if (createStore.isSuccess) {
+      onSuccess?.();
+    }
+  }, [createStore.isSuccess, onSuccess]);
 
   const form = useForm<CreateStoreForm>({
     resolver: zodResolver(createStoreSchema),

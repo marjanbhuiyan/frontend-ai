@@ -75,9 +75,7 @@ export const AppRoutes = React.memo(function AppRoutes(): React.JSX.Element {
       },
       {
         path: ROUTES.REGISTER,
-        /* FIXED: opening tag was `<PublicOnlyRoute>` (not imported) — now `<PublicRoute>`
-           to match the closing `</PublicRoute>` and the imported component. */
-        // element: <PublicRoute />,
+        element: <PublicRoute />,
         children: [
           {
             index: true,
@@ -158,11 +156,6 @@ export function AppRouter(): React.JSX.Element {
       return  <Navigate to={ROUTES.LOGIN} replace />
     }
 
-    return <BrowserRouter>
-        {/* In-app lazy route loading -> lightweight PageLoader.
-            GlobalLoader stays reserved for bootstrap (init/reload) above. */}
-        <Suspense fallback={<PageLoader message="Loading page..." />}>
-          <AppRoutes />
-        </Suspense>
-      </BrowserRouter>;
+    return <AppRoutes />
+        
 }

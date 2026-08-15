@@ -88,12 +88,9 @@ export default function App() {
   return (
     <AppProviders>
       <Bootstrap>
-        {/* <Suspense fallback={<PageLoader message="Loading page..." />}> */}
         <BrowserRouter>
           <AppRoutes />
         </BrowserRouter>
-          {/* <RouterProvider router={router} /> */}
-      {/* </Suspense> */}
       </Bootstrap>
     </AppProviders>
   );

@@ -12,6 +12,20 @@ export interface Session {
   menus: Menu[];
   permissions: string[];
   forbiddenRoutes?: string[];
+  /* Active subscription returned by /auth/login, /auth/register and
+     GET /subscriptions/me. Persisted on the session so the onboarding gate
+     (subscription -> create store -> select store) knows the user's plan. */
+  subscription?: Subscription;
+}
+
+/* Mirror of the backend subscription object. Present on the auth responses and
+   on GET /subscriptions/me. `hasSubscription` drives the onboarding gate. */
+export interface Subscription {
+  hasSubscription: boolean;
+  plan: string | null;
+  status: string | null;
+  expiresAt: string | null;
+  currentPeriodEnd: string | null;
 }
 
 

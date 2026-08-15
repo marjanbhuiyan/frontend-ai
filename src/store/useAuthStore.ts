@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { User, Menu, StoreInfo, Session } from "@/features/auth/types";
+import type { User, Menu, StoreInfo, Session, Subscription } from "@/features/auth/types";
 
 interface AuthState {
   user: User | null;
@@ -9,9 +9,16 @@ interface AuthState {
   permissions: string[];
   forbiddenRoutes: string[];
 
+  /* Active subscription — used by the onboarding gate to decide whether the
+     user must pick a plan before reaching the store step. */
+  subscription: Subscription | null;
+
   isAuthenticated: boolean;
 
   setSession: (session: Session) => void;
+  /* Updates only the subscription (used after subscribing so the onboarding
+     gate can advance without rebuilding the whole session). */
+  setSubscription: (subscription: Subscription) => void;
   clearSession: () => void;
 }
 
@@ -25,6 +32,8 @@ export const useAuthStore = create<AuthState>()(
       permissions: [],
       forbiddenRoutes: [],
 
+      subscription: null,
+
       isAuthenticated: false,
 
       setSession: (session) =>
@@ -35,9 +44,13 @@ export const useAuthStore = create<AuthState>()(
           menus: session.menus ?? [],
           permissions: session.permissions ?? [],
           forbiddenRoutes: session.forbiddenRoutes ?? [],
+          subscription: session.subscription ?? null,
 
           isAuthenticated: true,
         }),
+
+      setSubscription: (subscription) =>
+        set({ subscription }),
 
       clearSession: () =>
         set({
@@ -47,6 +60,8 @@ export const useAuthStore = create<AuthState>()(
           menus: [],
           permissions: [],
           forbiddenRoutes: [],
+
+          subscription: null,
 
           isAuthenticated: false,
         }),
