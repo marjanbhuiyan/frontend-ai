@@ -1,11 +1,8 @@
-import axios from "axios";
-import { API_BASE_URL } from "@/constants";
+import { api } from "@/platform/api/axios";
 
-export async function refreshSession(){
-  const { data } = await axios.post(
-    `${API_BASE_URL}/auth/refresh`,
-    {},
-    { withCredentials: true, timeout: 15000 }
-  );
-  return data;
+import type {AppBootstrapResponse, AppBootstrapApiResponse} from "@/types/app.types";
+
+export async function getAppBootstrap(): Promise<AppBootstrapResponse> {
+  const response = await api.get<AppBootstrapApiResponse>( "/app/bootstrap");
+  return response.data.data;
 }

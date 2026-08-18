@@ -1,0 +1,1 @@
+export { type AppBootstrapResponse } from "@/types/app.types";
