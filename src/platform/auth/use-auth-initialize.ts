@@ -1,30 +1,47 @@
-import { useEffect, useState } from "react";
-import { api } from "@/platform/api/axios";
-import { useAuthStore } from "@/platform/auth/auth.store";
-import type { RetryConfig } from "@/platform/api/axios";
+// src/platform/auth/use-auth-initialize.ts
 
+import {
+  useEffect,
+  useState,
+} from "react";
 
-interface AuthInitializationResult {
-  initialized: boolean;
-  authenticated: boolean;
-}
+import axios from "axios";
+
+import {
+  useAuthStore,
+} from "./auth.store";
+
+const API_URL =
+  import.meta.env.VITE_API_URL;
 
 export function useAuthInitialize() {
-  const setAccessToken = useAuthStore(
-      (state) => state.setAccessToken,
+  const accessToken =
+    useAuthStore(
+      (state) =>
+        state.accessToken,
     );
 
-  const clearAuth = useAuthStore(
-      (state) => state.clearAuth,
+  const setAccessToken =
+    useAuthStore(
+      (state) =>
+        state.setAccessToken,
     );
 
-  const accessToken = useAuthStore(
-      (state) => state.accessToken,
+  const clearAuth =
+    useAuthStore(
+      (state) =>
+        state.clearAuth,
     );
 
-  const [ initialized, setInitialized ] = useState(false);
+  const [
+    initialized,
+    setInitialized,
+  ] = useState(false);
 
-  const [ authenticated, setAuthenticated ] = useState(false);
+  const [
+    authenticated,
+    setAuthenticated,
+  ] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -32,54 +49,48 @@ export function useAuthInitialize() {
     async function initialize() {
       try {
         /*
-         * CASE 1
-         *
          * Access token exists.
          *
-         * Let /bootstrap use it.
-         * If expired, Axios interceptor
-         * will automatically refresh it.
+         * We assume the session can be
+         * authenticated and allow
+         * bootstrap to verify it.
          */
         if (accessToken) {
-          if (mounted) {
-            setAuthenticated(true);
+          if (!mounted) return;
 
-            setInitialized(true);
-          }
+          setAuthenticated(true);
+          setInitialized(true);
 
           return;
         }
 
         /*
-         * CASE 2
+         * No access token:
          *
-         * No access token.
-         *
-         * Try refresh cookie.
+         * try refresh-token cookie.
          */
-        const response = await api.post("/auth/refresh",
+        const response =
+          await axios.post(
+            `${API_URL}/auth/refresh`,
             {},
             {
               withCredentials:
                 true,
-
-              _skipAuthRefresh:
-                true,
-            } as RetryConfig,
+            },
           );
 
-        const newToken = response.data
-            ?.data
+        const newAccessToken =
+          response.data?.data
             ?.accessToken;
 
-        if (!newToken) {
+        if (!newAccessToken) {
           throw new Error(
-            "No access token returned from refresh",
+            "Refresh token invalid",
           );
         }
 
         setAccessToken(
-          newToken,
+          newAccessToken,
         );
 
         if (mounted) {
@@ -111,8 +122,8 @@ export function useAuthInitialize() {
     };
   }, [
     accessToken,
-    clearAuth,
     setAccessToken,
+    clearAuth,
   ]);
 
   return {
